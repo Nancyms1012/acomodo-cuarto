@@ -15,7 +15,7 @@
         }
         h1 { text-align: center; margin-bottom: 5px; color: #00d4ff; }
         .badge { display: inline-block; background: #00d4ff; color: #000; padding: 2px 8px; border-radius: 4px; font-size: 14px; font-weight: bold; }
-        .subtitle { text-align: center; margin-bottom: 30px; color: #aaa; font-size: 14px; }
+        .subtitle { text-align: center; margin-bottom: 10px; color: #aaa; font-size: 14px; }
         .nav-links { text-align: center; margin-bottom: 20px; }
         .nav-links a { color: #ff9800; text-decoration: none; font-size: 14px; }
         .nav-links a:hover { text-decoration: underline; }
@@ -23,39 +23,39 @@
 
         .room-container {
             position: relative;
-            width: 620px;
-            height: 480px;
+            width: 640px;
+            height: 500px;
             border: 4px solid #fff;
             background: #2a2a4a;
             margin: 0 auto;
         }
         .division-wall {
             position: absolute;
-            top: 0;
-            left: 310px;
-            width: 4px;
-            height: 480px;
+            left: 0;
+            top: 260px;
+            width: 640px;
+            height: 4px;
             background: #ff4444;
             z-index: 10;
         }
         .division-label {
             position: absolute;
-            top: 50%;
-            left: 310px;
-            transform: translate(-50%, -50%) rotate(-90deg);
+            top: 256px;
+            left: 50%;
+            transform: translateX(-50%);
             color: #ff4444;
             font-size: 11px;
             font-weight: bold;
             white-space: nowrap;
             z-index: 11;
             background: #2a2a4a;
-            padding: 2px 6px;
+            padding: 0 8px;
         }
         .mitad-label {
             position: absolute;
             font-size: 12px;
             font-weight: bold;
-            color: #666;
+            color: #555;
         }
         .furniture {
             position: absolute;
@@ -103,7 +103,6 @@
             font-size: 10px;
             color: #8bc34a;
             font-weight: bold;
-            border-radius: 0 20px 20px 0;
         }
         .wall-label {
             position: absolute;
@@ -144,7 +143,7 @@
             position: absolute;
             top: -12px;
             right: -8px;
-            font-size: 10px;
+            font-size: 9px;
             background: #00d4ff;
             color: #000;
             padding: 1px 4px;
@@ -155,7 +154,7 @@
 </head>
 <body>
     <h1>Propuesta NUEVA <span class="badge">DESPUES</span></h1>
-    <p class="subtitle">Vista desde arriba | Misma orientacion: puerta a la izquierda, pared larga izquierda = perchero</p>
+    <p class="subtitle">Vista desde arriba | Misma orientacion que el plano actual | Sin comoda pequena (#14)</p>
     <div class="nav-links"><a href="actual.html">&larr; Ver acomodo ACTUAL</a></div>
 
     <div class="plan-container">
@@ -164,111 +163,109 @@
 
                 <!-- Wall labels -->
                 <span class="wall-label" style="top: -18px; left: 50%; transform: translateX(-50%);">PARED CORTA SUPERIOR (entrada)</span>
-                <span class="wall-label" style="bottom: -18px; left: 50%; transform: translateX(-50%);">PARED CORTA INFERIOR (fondo)</span>
-                <span class="wall-label" style="top: 50%; left: -60px; transform: translateY(-50%) rotate(-90deg);">PARED LARGA IZQ (puerta+perchero)</span>
-                <span class="wall-label" style="top: 50%; right: -55px; transform: translateY(-50%) rotate(90deg);">PARED LARGA DER</span>
+                <span class="wall-label" style="bottom: -18px; left: 50%; transform: translateX(-50%);">PARED CORTA TRASERA (fondo - cama)</span>
+                <span class="wall-label" style="top: 50%; left: -70px; transform: translateY(-50%) rotate(-90deg);">PARED LARGA IZQ (puerta + perchero + TV)</span>
+                <span class="wall-label" style="top: 50%; right: -50px; transform: translateY(-50%) rotate(90deg);">PARED LARGA DER</span>
 
-                <!-- Dimensions -->
-                <span class="dimension" style="top: -35px; left: 70px;">284 cm</span>
-                <span class="dimension" style="top: -35px; right: 70px;">300 cm</span>
-                <span class="dimension" style="top: 50%; left: -40px; transform: translateY(-50%) rotate(-90deg);">224 cm</span>
-                <span class="dimension" style="top: 50%; right: -40px; transform: translateY(-50%) rotate(90deg);">220 cm</span>
-
-                <!-- Division wall -->
+                <!-- Division wall (horizontal) -->
                 <div class="division-wall"></div>
                 <div class="division-label">#12 PARED DIVISION</div>
 
                 <!-- Mitad labels -->
-                <span class="mitad-label" style="top: 5px; left: 120px;">MITAD #1 (284x224cm)</span>
-                <span class="mitad-label" style="top: 5px; right: 80px;">MITAD #2 (300x220cm)</span>
+                <span class="mitad-label" style="top: 8px; left: 260px;">MITAD #1 (284x224cm)</span>
+                <span class="mitad-label" style="bottom: 8px; left: 260px;">MITAD #2 (300x220cm)</span>
 
                 <!-- ==================== -->
-                <!-- PARED LARGA IZQUIERDA (top) -->
-                <!-- FIJOS: Perchero fijo (Mitad 1) y TV (Mitad 2) no se mueven -->
+                <!-- PARED LARGA IZQUIERDA - FIJOS -->
                 <!-- ==================== -->
 
-                <!-- #1 Puerta - misma posición -->
-                <div class="door" style="top: 0; left: 20px; width: 60px; height: 12px;">
+                <!-- #1 Puerta -->
+                <div class="door" style="top: 10px; left: 0; width: 12px; height: 70px; border-radius: 0 20px 20px 0;">
                     <span class="number" style="background: #8bc34a;">1</span>
-                    PUERTA
+                    <span style="transform: rotate(-90deg); white-space: nowrap; font-size: 9px;">PUERTA</span>
                 </div>
 
-                <!-- #13 Perchero fijo - NO SE MUEVE, ahora sin la cómoda pequeña al lado -->
-                <div class="furniture fixed" style="top: 16px; left: 85px; width: 220px; height: 54px;">
+                <!-- Espacio puerta -->
+                <div style="position: absolute; top: 10px; left: 16px; width: 70px; height: 70px; border: 1px dashed #8bc34a33; border-radius: 0 0 70px 0;"></div>
+
+                <!-- #13 Perchero fijo - ahora con MAS espacio (sin cómoda peq.) -->
+                <div class="furniture fixed" style="top: 100px; left: 8px; width: 54px; height: 155px;">
                     <span class="number">13</span>
-                    PERCHERO FIJO (180x50cm) - NO SE MUEVE
+                    <span style="font-size: 8px;">PERCHERO<br>FIJO<br>(180x50)<br>NO SE<br>MUEVE<br><br>+espacio<br>libre!</span>
                 </div>
 
-                <!-- #10 TV - NO SE MUEVE, pared larga izq, Mitad #2 -->
-                <div class="furniture fixed" style="top: 16px; left: 395px; width: 70px; height: 25px;">
+                <!-- #10 TV - NO SE MUEVE -->
+                <div class="furniture fixed" style="top: 280px; left: 8px; width: 25px; height: 70px;">
                     <span class="number">10</span>
-                    TV (fijo)
+                    <span style="font-size: 8px;">TV<br>(fijo)</span>
                 </div>
 
                 <!-- ==================== -->
-                <!-- MITAD #1: Entrada + Almacenaje -->
+                <!-- PARED CORTA SUPERIOR (entrada) -->
+                <!-- Ahora más espacio sin la cómoda pequeña -->
                 <!-- ==================== -->
 
-                <!-- #2 Perchero de pie - al lado de la puerta -->
-                <div class="furniture entry" style="top: 75px; left: 20px; width: 35px; height: 45px;">
+                <!-- #2 Perchero de pie - pared superior -->
+                <div class="furniture entry" style="top: 8px; left: 95px; width: 35px; height: 40px;">
                     <span class="number">2</span>
                     <span style="font-size: 8px;">Perch.<br>pie</span>
                 </div>
 
-                <!-- #3 Mesa de adorno - pared larga derecha, Mitad #1 -->
-                <div class="furniture decor" style="bottom: 12px; left: 20px; width: 87px; height: 44px;">
+                <!-- #3 Mesa de adorno - pared superior -->
+                <div class="furniture decor" style="top: 8px; left: 135px; width: 87px; height: 44px;">
                     <span class="number">3</span>
                     Mesa adorno<br>(80x40)
-                    <span class="change-indicator">MOVIDO</span>
                 </div>
 
-                <!-- #4 Estante grande - pared larga derecha, Mitad #1 -->
-                <div class="furniture storage" style="bottom: 12px; left: 115px; width: 98px; height: 49px;">
-                    <span class="number">4</span>
-                    Estante grande<br>(90x45)
-                </div>
-
-                <!-- #11 Estante blanco - pared larga derecha, Mitad #1 cerca de la división -->
-                <div class="furniture storage" style="bottom: 12px; left: 220px; width: 66px; height: 33px;">
+                <!-- #11 Estante blanco - pared superior, Mitad 1 (MOVIDO) -->
+                <div class="furniture storage" style="top: 8px; left: 230px; width: 66px; height: 33px;">
                     <span class="number">11</span>
                     Est. blanco<br>(61x30)
                     <span class="change-indicator">MOVIDO</span>
                 </div>
 
                 <!-- ==================== -->
-                <!-- MITAD #2: Descanso + Trabajo -->
+                <!-- PARED LARGA DERECHA -->
                 <!-- ==================== -->
 
-                <!-- #8 Cama - contra pared corta derecha (misma posición) -->
-                <div class="furniture sleep" style="top: 55px; right: 8px; width: 157px; height: 125px;">
-                    <span class="number">8</span>
-                    CAMA<br>(195x145cm)<br>&larr; mira al TV
+                <!-- #4 Estante grande - pared derecha, Mitad 1 -->
+                <div class="furniture storage" style="top: 55px; right: 8px; width: 49px; height: 98px;">
+                    <span class="number">4</span>
+                    <span style="font-size: 8px;">Estante<br>grande<br>(90x45)</span>
                 </div>
 
-                <!-- #9 Mesa de noche - al lado de la cama -->
-                <div class="furniture decor" style="top: 185px; right: 65px; width: 43px; height: 31px;">
+                <!-- #5 Cómoda grande - pared derecha (MISMO LUGAR) -->
+                <div class="furniture storage" style="top: 158px; right: 8px; width: 47px; height: 142px;">
+                    <span class="number">5</span>
+                    <span style="font-size: 8px;">Comoda<br>grande<br>(130x43.5)</span>
+                </div>
+
+                <!-- #6 Escritorio - pared derecha, a los pies de la cama -->
+                <div class="furniture work" style="top: 305px; right: 8px; width: 65px; height: 130px;">
+                    <span class="number">6</span>
+                    Escritorio<br>(60x120cm)<br>Pies de<br>la cama
+                </div>
+
+                <!-- ==================== -->
+                <!-- PARED CORTA TRASERA (fondo) - Misma config -->
+                <!-- ==================== -->
+
+                <!-- #9 Mesa de noche -->
+                <div class="furniture decor" style="bottom: 8px; left: 8px; width: 42px; height: 31px;">
                     <span class="number">9</span>
                     <span style="font-size: 8px;">Mesa<br>noche</span>
                 </div>
 
-                <!-- #6 Escritorio - pared larga derecha, Mitad #2 -->
-                <div class="furniture work" style="bottom: 12px; left: 330px; width: 130px; height: 65px;">
-                    <span class="number">6</span>
-                    Escritorio<br>(120x60cm)
+                <!-- #8 Cama -->
+                <div class="furniture sleep" style="bottom: 8px; left: 54px; width: 470px; height: 125px;">
+                    <span class="number">8</span>
+                    CAMA (195x145cm)<br>&uarr; Mira al TV &uarr;
                 </div>
 
-                <!-- #5 Cómoda grande - pared corta inferior (fondo) -->
-                <div class="furniture storage" style="bottom: 12px; right: 10px; width: 142px; height: 47px;">
-                    <span class="number">5</span>
-                    Comoda grande<br>(130x43.5)
-                    <span class="change-indicator">MOVIDO</span>
-                </div>
-
-                <!-- #7 Gavetero verde - entre escritorio y cómoda o pared -->
-                <div class="furniture storage" style="top: 55px; left: 320px; width: 39px; height: 45px;">
+                <!-- #7 Gavetero -->
+                <div class="furniture storage" style="bottom: 8px; right: 78px; width: 39px; height: 45px;">
                     <span class="number">7</span>
                     <span style="font-size: 8px;">Gavet.<br>(41x36)</span>
-                    <span class="change-indicator">MOVIDO</span>
                 </div>
 
             </div>
@@ -308,18 +305,14 @@
 
         <!-- Notes -->
         <div class="notes">
-            <h3>Cambios en la Propuesta Nueva</h3>
+            <h3>Cambios en la Propuesta</h3>
             <ul>
-                <li><strong>ELIMINADA:</strong> Comoda pequena (#14) - ya no esta.</li>
-                <li><strong>Perchero fijo (#13):</strong> Sin cambio. Ahora con mas espacio libre al quitarle la comoda pequeña de al lado.</li>
-                <li><strong>TV (#10):</strong> Sin cambio. Sigue en la pared larga izquierda, Mitad #2.</li>
-                <li><strong>Cama (#8):</strong> Sin cambio. Contra pared corta derecha, mirando al TV.</li>
-                <li><strong>Estante blanco (#11):</strong> MOVIDO a la pared larga derecha, Mitad #1 (antes estaba en pared izq de Mitad #2).</li>
-                <li><strong>Comoda grande (#5):</strong> MOVIDA a pared larga derecha, Mitad #2 junto al escritorio.</li>
-                <li><strong>Gavetero (#7):</strong> MOVIDO al interior de Mitad #2.</li>
-                <li><strong>Escritorio (#6):</strong> Permanece en pared larga derecha, Mitad #2.</li>
-                <li><strong>Mitad #1:</strong> Mas despejada - solo perchero fijo, perchero pie, mesa adorno, estante grande, estante blanco.</li>
-                <li><strong>Mitad #2:</strong> Zona de descanso (cama+TV) + zona de trabajo (escritorio+comoda+gavetero).</li>
+                <li><strong>ELIMINADA:</strong> Comoda pequena (#14) - ya no esta. Esto libera espacio en la pared izquierda junto al perchero fijo.</li>
+                <li><strong>Estante blanco (#11):</strong> MOVIDO de la pared izquierda (Mitad 2) a la pared superior (entrada), al lado de la mesa de adorno. Cabe: 80+61 = 141cm, con perchero y espacio puerta.</li>
+                <li><strong>Sin cambios:</strong> Perchero fijo (#13), TV (#10), Cama (#8), Mesa noche (#9), Gavetero (#7), Escritorio (#6), Comoda grande (#5), Estante grande (#4), Mesa adorno (#3), Perchero pie (#2).</li>
+                <li><strong>Beneficio principal:</strong> Pared izquierda mas despejada. El perchero fijo tiene mas espacio de acceso sin la comoda pequeña bloqueando.</li>
+                <li><strong>Pared trasera:</strong> Sin cambio. Mesa noche + Cama + Gavetero siguen haciendo el ancho completo.</li>
+                <li><strong>Pared derecha:</strong> Sin cambio. Estante grande + Comoda grande + Escritorio.</li>
             </ul>
         </div>
     </div>

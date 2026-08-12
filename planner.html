@@ -14,33 +14,33 @@
             touch-action: manipulation;
         }
         .header {
-            padding: 10px 15px;
+            padding: 8px 15px;
             background: #16213e;
             text-align: center;
             border-bottom: 2px solid #0f3460;
         }
-        .header h1 { font-size: 18px; color: #00d4ff; }
-        .header p { font-size: 11px; color: #aaa; margin-top: 3px; }
+        .header h1 { font-size: 16px; color: #00d4ff; }
+        .header p { font-size: 10px; color: #aaa; margin-top: 2px; }
 
         .app-container {
             display: flex;
             flex-direction: column;
-            height: calc(100vh - 60px);
+            height: calc(100vh - 50px);
         }
         .toolbar {
             display: flex;
-            gap: 8px;
-            padding: 8px 12px;
+            gap: 6px;
+            padding: 6px 10px;
             background: #16213e;
             flex-wrap: wrap;
             align-items: center;
             border-bottom: 1px solid #0f3460;
         }
         .toolbar button {
-            padding: 6px 12px;
+            padding: 6px 10px;
             border: none;
             border-radius: 5px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             cursor: pointer;
             touch-action: manipulation;
@@ -48,9 +48,19 @@
         .btn-add { background: #4ecdc4; color: #000; }
         .btn-delete { background: #ff6b6b; color: #fff; }
         .btn-rotate { background: #ffc107; color: #000; }
-        .btn-lock { background: #966fd6; color: #fff; }
         .btn-export { background: #8bc34a; color: #000; }
+        .btn-reset { background: #966fd6; color: #fff; }
+        .btn-list { background: #0f3460; color: #00d4ff; border: 1px solid #00d4ff; }
         .toolbar button:active { transform: scale(0.95); }
+
+        .info-bar {
+            padding: 3px 10px;
+            background: #0f3460;
+            font-size: 10px;
+            color: #aaa;
+            text-align: center;
+        }
+        .info-bar span { color: #00d4ff; font-weight: bold; }
 
         .canvas-area {
             flex: 1;
@@ -78,11 +88,37 @@
             position: absolute;
             z-index: 6;
             color: #ff4444;
-            font-size: 9px;
+            font-size: 8px;
             font-weight: bold;
             background: #2a2a4a;
-            padding: 0 4px;
+            padding: 0 3px;
             pointer-events: none;
+        }
+        .balcon-indicator {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 15px;
+            background: rgba(139,195,74,0.1);
+            border-bottom: 2px dashed #8bc34a55;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7px;
+            color: #8bc34a;
+        }
+        .door-indicator {
+            position: absolute;
+            border: 2px solid #8bc34a;
+            background: rgba(139,195,74,0.15);
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7px;
+            color: #8bc34a;
+            font-weight: bold;
+            border-radius: 0 0 5px 5px;
         }
 
         .furniture-item {
@@ -93,7 +129,7 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            font-size: 9px;
+            font-size: 8px;
             font-weight: bold;
             line-height: 1.1;
             cursor: grab;
@@ -104,17 +140,16 @@
         }
         .furniture-item:active { cursor: grabbing; }
         .furniture-item.selected {
-            box-shadow: 0 0 0 3px #00d4ff, 0 0 15px rgba(0,212,255,0.5);
+            box-shadow: 0 0 0 3px #00d4ff, 0 0 12px rgba(0,212,255,0.5);
             z-index: 100;
         }
         .furniture-item.locked {
-            opacity: 0.8;
+            opacity: 0.85;
             cursor: not-allowed;
-            border-style: solid;
         }
         .furniture-item .f-label {
             pointer-events: none;
-            font-size: 8px;
+            font-size: 7px;
             overflow: hidden;
         }
 
@@ -135,118 +170,81 @@
             border-radius: 12px;
             padding: 20px;
             width: 100%;
-            max-width: 350px;
+            max-width: 320px;
             border: 2px solid #0f3460;
         }
-        .modal h2 { color: #00d4ff; font-size: 16px; margin-bottom: 15px; }
-        .modal label { display: block; font-size: 12px; color: #aaa; margin-bottom: 4px; margin-top: 10px; }
+        .modal h2 { color: #00d4ff; font-size: 15px; margin-bottom: 12px; }
+        .modal label { display: block; font-size: 11px; color: #aaa; margin-bottom: 3px; margin-top: 8px; }
         .modal input, .modal select {
             width: 100%;
-            padding: 8px;
+            padding: 7px;
             border: 1px solid #0f3460;
             border-radius: 5px;
             background: #1a1a2e;
             color: #eee;
-            font-size: 14px;
+            font-size: 13px;
         }
         .modal-buttons {
             display: flex;
             gap: 10px;
-            margin-top: 18px;
+            margin-top: 15px;
         }
         .modal-buttons button {
             flex: 1;
-            padding: 10px;
+            padding: 9px;
             border: none;
             border-radius: 5px;
             font-weight: bold;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
         }
         .btn-confirm { background: #4ecdc4; color: #000; }
         .btn-cancel { background: #444; color: #eee; }
 
-        /* Furniture list panel */
+        /* Panel */
         .panel {
             display: none;
             position: fixed;
             top: 0; right: 0; bottom: 0;
-            width: 280px;
-            max-width: 85vw;
+            width: 260px;
+            max-width: 80vw;
             background: #16213e;
             border-left: 2px solid #0f3460;
             z-index: 500;
             overflow-y: auto;
-            padding: 15px;
+            padding: 12px;
             -webkit-overflow-scrolling: touch;
         }
         .panel.active { display: block; }
-        .panel h3 { color: #00d4ff; margin-bottom: 10px; font-size: 14px; }
+        .panel h3 { color: #00d4ff; margin-bottom: 8px; font-size: 13px; }
         .panel-close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #ff6b6b;
-            border: none;
-            color: #fff;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            font-size: 14px;
-            cursor: pointer;
+            position: absolute; top: 8px; right: 8px;
+            background: #ff6b6b; border: none; color: #fff;
+            width: 22px; height: 22px; border-radius: 50%;
+            font-size: 12px; cursor: pointer;
         }
         .panel-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 8px;
-            margin-bottom: 6px;
-            background: #1a1a2e;
-            border-radius: 5px;
-            font-size: 11px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 6px; margin-bottom: 5px;
+            background: #1a1a2e; border-radius: 4px; font-size: 10px;
         }
-        .panel-item .pi-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 2px;
-            margin-right: 8px;
-            flex-shrink: 0;
-        }
+        .panel-item .pi-color { width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; flex-shrink: 0; }
         .panel-item .pi-info { flex: 1; }
         .panel-item .pi-name { font-weight: bold; }
-        .panel-item .pi-size { color: #888; font-size: 10px; }
-        .panel-item button {
-            padding: 3px 8px;
-            border: none;
-            border-radius: 3px;
-            font-size: 10px;
-            cursor: pointer;
-            font-weight: bold;
-        }
+        .panel-item .pi-size { color: #888; font-size: 9px; }
+        .panel-item button { padding: 2px 6px; border: none; border-radius: 3px; font-size: 9px; cursor: pointer; font-weight: bold; }
         .pi-del { background: #ff6b6b; color: #fff; }
 
-        .btn-list { background: #0f3460; color: #00d4ff; border: 1px solid #00d4ff; }
-
-        .info-bar {
-            padding: 4px 12px;
-            background: #0f3460;
-            font-size: 11px;
-            color: #aaa;
-            text-align: center;
+        @media (max-width: 420px) {
+            .toolbar { padding: 5px 6px; gap: 4px; }
+            .toolbar button { padding: 5px 7px; font-size: 10px; }
         }
-        .info-bar span { color: #00d4ff; font-weight: bold; }
-
-        @media (max-width: 500px) {
-            .toolbar { padding: 6px 8px; gap: 5px; }
-            .toolbar button { padding: 5px 8px; font-size: 11px; }
-            .header h1 { font-size: 15px; }
-        }
-</style>
+    </style>
 </head>
 <body>
 <div class="header">
     <h1>Planificador de Cuarto</h1>
-    <p>Arrastra los muebles | Toca para seleccionar | Agrega o elimina muebles</p>
+    <p>Arrastra muebles | Toca para seleccionar | + Agregar / Eliminar</p>
 </div>
 
 <div class="app-container">
@@ -255,6 +253,7 @@
         <button class="btn-rotate" onclick="rotateSelected()">Rotar</button>
         <button class="btn-delete" onclick="deleteSelected()">Eliminar</button>
         <button class="btn-list" onclick="togglePanel()">Lista</button>
+        <button class="btn-reset" onclick="resetLayout()">Reset</button>
         <button class="btn-export" onclick="exportLayout()">Exportar</button>
     </div>
     <div class="info-bar">
@@ -262,13 +261,15 @@
     </div>
     <div class="canvas-area" id="canvasArea">
         <div class="room-canvas" id="roomCanvas">
+            <div class="balcon-indicator">BALCON</div>
+            <div class="door-indicator" id="doorIndicator">Puerta</div>
             <div class="division-line" id="divLine"></div>
             <div class="div-label" id="divLabel">DIVISION</div>
         </div>
     </div>
 </div>
 
-<!-- Add furniture modal -->
+<!-- Modal -->
 <div class="modal-overlay" id="addModal">
     <div class="modal">
         <h2>Agregar Mueble</h2>
@@ -294,7 +295,7 @@
     </div>
 </div>
 
-<!-- Furniture list panel -->
+<!-- Panel -->
 <div class="panel" id="listPanel">
     <button class="panel-close" onclick="togglePanel()">X</button>
     <h3>Muebles en el cuarto</h3>
@@ -302,17 +303,13 @@
 </div>
 
 <script>
-// Room config (cm)
-const ROOM = {
-    mitad1: { largo: 284, ancho: 224 },
-    mitad2: { largo: 300, ancho: 220 }
-};
-// Total room: largo = mitad1.largo + mitad2.largo (vertical), ancho ~= 224 (horizontal)
-const TOTAL_LARGO = ROOM.mitad1.largo + ROOM.mitad2.largo; // 584cm vertical
-const TOTAL_ANCHO = Math.max(ROOM.mitad1.ancho, ROOM.mitad2.ancho); // 224cm horizontal
-const DIVISION_AT = ROOM.mitad1.largo; // 284cm from top
+// Room dimensions (cm) - Cuarto vertical (mas largo que ancho)
+// Ancho = 224cm (pared corta, horizontal)
+// Largo total = mitad1 (284) + mitad2 (300) = 584cm (vertical)
+const ROOM_ANCHO = 224; // horizontal
+const ROOM_LARGO = 584; // vertical (top to bottom)
+const DIVISION_Y = 284; // division at 284cm from top (end of mitad 1)
 
-// Scale: fit the room in available space
 let SCALE = 1;
 let canvasW, canvasH;
 
@@ -325,22 +322,25 @@ const COLORS = {
     fixed: { bg: 'rgba(255,107,107,0.35)', border: '#ff6b6b', text: '#ff6b6b' }
 };
 
-// Furniture: {id, name, largo(cm), ancho(cm), x(cm), y(cm), rotated, locked, category}
-let furnitureList = [
-    { id: 1, name: 'Puerta', largo: 80, ancho: 10, x: 0, y: 10, rotated: true, locked: true, category: 'entry' },
-    { id: 2, name: 'Perchero pie', largo: 30, ancho: 30, x: 95, y: 5, rotated: false, locked: false, category: 'entry' },
-    { id: 3, name: 'Mesa adorno', largo: 80, ancho: 40, x: 130, y: 5, rotated: false, locked: false, category: 'decor' },
-    { id: 4, name: 'Estante grande', largo: 90, ancho: 45, x: 179, y: 50, rotated: true, locked: false, category: 'storage' },
-    { id: 5, name: 'Comoda grande', largo: 130, ancho: 43, x: 179, y: 145, rotated: true, locked: false, category: 'storage' },
-    { id: 6, name: 'Escritorio', largo: 120, ancho: 60, x: 164, y: 310, rotated: true, locked: false, category: 'work' },
-    { id: 7, name: 'Gavetero verde', largo: 41, ancho: 36, x: 148, y: 468, rotated: false, locked: false, category: 'storage' },
-    { id: 8, name: 'Cama', largo: 195, ancho: 145, x: 20, y: 439, rotated: false, locked: false, category: 'sleep' },
-    { id: 9, name: 'Mesa de noche', largo: 38, ancho: 28, x: 2, y: 446, rotated: true, locked: false, category: 'decor' },
-    { id: 10, name: 'TV', largo: 60, ancho: 10, x: 2, y: 300, rotated: true, locked: true, category: 'fixed' },
-    { id: 11, name: 'Estante blanco', largo: 61, ancho: 30, x: 2, y: 370, rotated: true, locked: false, category: 'storage' },
-    { id: 13, name: 'Perchero fijo', largo: 180, ancho: 50, x: 2, y: 95, rotated: true, locked: true, category: 'fixed' },
+// Default furniture layout matching the correct screenshot
+// x = horizontal (0=left wall, 224=right wall)
+// y = vertical (0=top/entrance, 584=bottom/bed wall)
+const DEFAULT_FURNITURE = [
+    { id: 2, name: 'Perchero pie', largo: 30, ancho: 30, x: 100, y: 15, rotated: false, locked: false, category: 'entry' },
+    { id: 3, name: 'Mesa de adorno', largo: 80, ancho: 40, x: 0, y: 15, rotated: false, locked: false, category: 'decor' },
+    { id: 4, name: 'Estante grande', largo: 90, ancho: 45, x: 0, y: 60, rotated: true, locked: false, category: 'storage' },
+    { id: 5, name: 'Comoda grande', largo: 130, ancho: 43, x: 0, y: 155, rotated: true, locked: false, category: 'storage' },
+    { id: 6, name: 'Escritorio', largo: 120, ancho: 60, x: 0, y: 320, rotated: true, locked: false, category: 'work' },
+    { id: 7, name: 'Gavetero verde', largo: 41, ancho: 36, x: 0, y: 543, rotated: false, locked: false, category: 'storage' },
+    { id: 8, name: 'Cama', largo: 195, ancho: 145, x: 40, y: 439, rotated: false, locked: false, category: 'sleep' },
+    { id: 9, name: 'Mesa de noche', largo: 38, ancho: 28, x: 196, y: 546, rotated: false, locked: false, category: 'decor' },
+    { id: 10, name: 'TV', largo: 60, ancho: 10, x: 214, y: 380, rotated: true, locked: true, category: 'fixed' },
+    { id: 11, name: 'Estante blanco', largo: 61, ancho: 30, x: 194, y: 310, rotated: true, locked: false, category: 'storage' },
+    { id: 13, name: 'Perchero fijo', largo: 180, ancho: 50, x: 174, y: 100, rotated: true, locked: true, category: 'fixed' },
+    { id: 14, name: 'Comoda pequena', largo: 63, ancho: 40, x: 160, y: 20, rotated: true, locked: false, category: 'storage' },
 ];
 
+let furnitureList = JSON.parse(JSON.stringify(DEFAULT_FURNITURE));
 let nextId = 20;
 let selectedId = null;
 
@@ -348,12 +348,12 @@ function calculateScale() {
     const area = document.getElementById('canvasArea');
     const availW = area.clientWidth - 20;
     const availH = area.clientHeight - 20;
-    const scaleW = availW / TOTAL_ANCHO;
-    const scaleH = availH / TOTAL_LARGO;
-    SCALE = Math.min(scaleW, scaleH, 2.5);
-    SCALE = Math.max(SCALE, 0.5);
-    canvasW = TOTAL_ANCHO * SCALE;
-    canvasH = TOTAL_LARGO * SCALE;
+    const scaleW = availW / ROOM_ANCHO;
+    const scaleH = availH / ROOM_LARGO;
+    SCALE = Math.min(scaleW, scaleH, 2.0);
+    SCALE = Math.max(SCALE, 0.4);
+    canvasW = ROOM_ANCHO * SCALE;
+    canvasH = ROOM_LARGO * SCALE;
 }
 
 function renderRoom() {
@@ -362,20 +362,27 @@ function renderRoom() {
     canvas.style.width = canvasW + 'px';
     canvas.style.height = canvasH + 'px';
 
-    // Division line
+    // Division line (horizontal)
     const divLine = document.getElementById('divLine');
-    const divY = DIVISION_AT * SCALE;
+    const divY = DIVISION_Y * SCALE;
     divLine.style.left = '0';
     divLine.style.top = divY + 'px';
     divLine.style.width = '100%';
     divLine.style.height = '3px';
 
     const divLabel = document.getElementById('divLabel');
-    divLabel.style.top = (divY - 8) + 'px';
+    divLabel.style.top = (divY - 9) + 'px';
     divLabel.style.left = '50%';
     divLabel.style.transform = 'translateX(-50%)';
 
-    // Remove old furniture elements
+    // Door indicator (top right)
+    const door = document.getElementById('doorIndicator');
+    door.style.top = '0px';
+    door.style.right = '5px';
+    door.style.width = (40 * SCALE) + 'px';
+    door.style.height = '14px';
+
+    // Remove old furniture
     canvas.querySelectorAll('.furniture-item').forEach(el => el.remove());
 
     // Render furniture
@@ -387,6 +394,7 @@ function renderRoom() {
         el.style.borderColor = col.border;
         el.style.color = col.text;
 
+        // rotated swaps width/height visually
         const w = (f.rotated ? f.ancho : f.largo) * SCALE;
         const h = (f.rotated ? f.largo : f.ancho) * SCALE;
         el.style.width = w + 'px';
@@ -397,7 +405,6 @@ function renderRoom() {
         el.dataset.id = f.id;
         el.innerHTML = '<span class="f-label">' + f.name + '</span>';
 
-        // Events
         el.addEventListener('mousedown', (e) => startDrag(e, f));
         el.addEventListener('touchstart', (e) => startDrag(e, f), { passive: false });
         el.addEventListener('click', () => selectFurniture(f.id));
@@ -408,7 +415,6 @@ function renderRoom() {
     updatePanel();
 }
 
-// Selection
 function selectFurniture(id) {
     selectedId = id;
     const f = furnitureList.find(x => x.id === id);
@@ -416,22 +422,20 @@ function selectFurniture(id) {
     renderRoom();
 }
 
-// Drag & drop
+// Drag
 let dragging = null;
 let dragOffset = { x: 0, y: 0 };
 
 function startDrag(e, f) {
-    if (f.locked) return;
+    if (f.locked) { selectFurniture(f.id); return; }
     e.preventDefault();
     selectFurniture(f.id);
     dragging = f;
-
     const rect = document.getElementById('roomCanvas').getBoundingClientRect();
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    dragOffset.x = clientX - rect.left - (f.x * SCALE);
-    dragOffset.y = clientY - rect.top - (f.y * SCALE);
-
+    const cx = e.touches ? e.touches[0].clientX : e.clientX;
+    const cy = e.touches ? e.touches[0].clientY : e.clientY;
+    dragOffset.x = cx - rect.left - (f.x * SCALE);
+    dragOffset.y = cy - rect.top - (f.y * SCALE);
     document.addEventListener('mousemove', onDrag);
     document.addEventListener('mouseup', endDrag);
     document.addEventListener('touchmove', onDrag, { passive: false });
@@ -442,22 +446,16 @@ function onDrag(e) {
     if (!dragging) return;
     e.preventDefault();
     const rect = document.getElementById('roomCanvas').getBoundingClientRect();
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-    let newX = (clientX - rect.left - dragOffset.x) / SCALE;
-    let newY = (clientY - rect.top - dragOffset.y) / SCALE;
-
-    // Bounds
+    const cx = e.touches ? e.touches[0].clientX : e.clientX;
+    const cy = e.touches ? e.touches[0].clientY : e.clientY;
+    let nx = (cx - rect.left - dragOffset.x) / SCALE;
+    let ny = (cy - rect.top - dragOffset.y) / SCALE;
     const fw = dragging.rotated ? dragging.ancho : dragging.largo;
     const fh = dragging.rotated ? dragging.largo : dragging.ancho;
-    newX = Math.max(0, Math.min(newX, TOTAL_ANCHO - fw));
-    newY = Math.max(0, Math.min(newY, TOTAL_LARGO - fh));
-
-    dragging.x = Math.round(newX);
-    dragging.y = Math.round(newY);
-
-    // Move element directly for performance
+    nx = Math.max(0, Math.min(nx, ROOM_ANCHO - fw));
+    ny = Math.max(0, Math.min(ny, ROOM_LARGO - fh));
+    dragging.x = Math.round(nx);
+    dragging.y = Math.round(ny);
     const el = document.querySelector('[data-id="' + dragging.id + '"]');
     if (el) {
         el.style.left = (dragging.x * SCALE) + 'px';
@@ -474,7 +472,6 @@ function endDrag() {
     saveToLocal();
 }
 
-// Rotate
 function rotateSelected() {
     const f = furnitureList.find(x => x.id === selectedId);
     if (!f || f.locked) return;
@@ -483,12 +480,11 @@ function rotateSelected() {
     saveToLocal();
 }
 
-// Delete
 function deleteSelected() {
     if (!selectedId) return;
     const f = furnitureList.find(x => x.id === selectedId);
-    if (f && f.locked) { alert('Este mueble esta fijo y no se puede eliminar.'); return; }
-    if (confirm('Eliminar "' + f.name + '"?')) {
+    if (f && f.locked) { alert('Este mueble es fijo, no se puede eliminar.'); return; }
+    if (f && confirm('Eliminar "' + f.name + '"?')) {
         furnitureList = furnitureList.filter(x => x.id !== selectedId);
         selectedId = null;
         document.getElementById('selectedInfo').textContent = 'ninguno';
@@ -497,7 +493,6 @@ function deleteSelected() {
     }
 }
 
-// Add modal
 function openAddModal() { document.getElementById('addModal').classList.add('active'); }
 function closeAddModal() { document.getElementById('addModal').classList.remove('active'); }
 
@@ -506,22 +501,12 @@ function addFurniture() {
     const largo = parseInt(document.getElementById('mLargo').value);
     const ancho = parseInt(document.getElementById('mAncho').value);
     const cat = document.getElementById('mCategory').value;
-
     if (!name || !largo || !ancho) { alert('Completa todos los campos'); return; }
-
     furnitureList.push({
-        id: nextId++,
-        name: name,
-        largo: largo,
-        ancho: ancho,
-        x: 50,
-        y: 300,
-        rotated: false,
-        locked: cat === 'fixed',
-        category: cat
+        id: nextId++, name, largo, ancho,
+        x: 80, y: 290,
+        rotated: false, locked: cat === 'fixed', category: cat
     });
-
-    // Clear form
     document.getElementById('mName').value = '';
     document.getElementById('mLargo').value = '';
     document.getElementById('mAncho').value = '';
@@ -530,7 +515,6 @@ function addFurniture() {
     saveToLocal();
 }
 
-// Panel
 function togglePanel() {
     document.getElementById('listPanel').classList.toggle('active');
     updatePanel();
@@ -544,7 +528,7 @@ function updatePanel() {
         list.innerHTML += '<div class="panel-item">' +
             '<div class="pi-color" style="background:' + col.border + '"></div>' +
             '<div class="pi-info"><div class="pi-name">' + f.name + (f.locked ? ' (fijo)' : '') + '</div>' +
-            '<div class="pi-size">' + f.largo + 'cm x ' + f.ancho + 'cm</div></div>' +
+            '<div class="pi-size">' + f.largo + 'x' + f.ancho + 'cm</div></div>' +
             (f.locked ? '' : '<button class="pi-del" onclick="deleteFurnitureById(' + f.id + ')">X</button>') +
             '</div>';
     });
@@ -560,27 +544,34 @@ function deleteFurnitureById(id) {
     }
 }
 
-// Export
-function exportLayout() {
-    let text = 'DISTRIBUCION DEL CUARTO\n';
-    text += '========================\n\n';
-    furnitureList.forEach(f => {
-        text += f.name + ' (' + f.largo + 'x' + f.ancho + 'cm)';
-        text += f.locked ? ' [FIJO]' : '';
-        text += ' - Pos: (' + f.x + ', ' + f.y + ')cm';
-        text += f.rotated ? ' [Rotado]' : '';
-        text += '\n';
-    });
-    const blob = new Blob([text], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'distribucion-cuarto.txt';
-    a.click();
-    URL.revokeObjectURL(url);
+function resetLayout() {
+    if (confirm('Resetear a la posicion original?')) {
+        localStorage.removeItem('roomPlanner');
+        localStorage.removeItem('roomPlannerNextId');
+        furnitureList = JSON.parse(JSON.stringify(DEFAULT_FURNITURE));
+        nextId = 20;
+        selectedId = null;
+        document.getElementById('selectedInfo').textContent = 'ninguno';
+        renderRoom();
+    }
 }
 
-// Local storage
+function exportLayout() {
+    let t = 'DISTRIBUCION DEL CUARTO\n========================\n\n';
+    furnitureList.forEach(f => {
+        t += f.name + ' (' + f.largo + 'x' + f.ancho + 'cm)';
+        t += f.locked ? ' [FIJO]' : '';
+        t += ' - Pos: (' + f.x + ',' + f.y + ')cm';
+        t += f.rotated ? ' [Rotado]' : '';
+        t += '\n';
+    });
+    const blob = new Blob([t], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'distribucion-cuarto.txt';
+    a.click();
+}
+
 function saveToLocal() {
     localStorage.setItem('roomPlanner', JSON.stringify(furnitureList));
     localStorage.setItem('roomPlannerNextId', nextId);
@@ -594,11 +585,7 @@ function loadFromLocal() {
     }
 }
 
-// Init
-window.addEventListener('load', () => {
-    loadFromLocal();
-    renderRoom();
-});
+window.addEventListener('load', () => { loadFromLocal(); renderRoom(); });
 window.addEventListener('resize', renderRoom);
 </script>
 </body>

@@ -334,6 +334,8 @@ const ROOM_ANCHO = 224; // horizontal
 const ROOM_LARGO = 584; // vertical (top to bottom)
 const DIVISION_Y = 300; // division a 300cm desde arriba: mitad 2 (puerta) = 300cm, mitad 1 (cama) = 284cm
 const ANCHO_MITAD_2 = 220; // ancho de la mitad con la puerta (arriba)
+const DIVISION_LARGO = 75; // cuanto sale la division desde la pared derecha
+const DIVISION_GROSOR = 10;
 
 let SCALE = 1;
 let canvasW, canvasH;
@@ -351,18 +353,20 @@ const COLORS = {
 // x = horizontal (0=left wall, 224=right wall)
 // y = vertical (0=top/entrance, 584=bottom/bed wall)
 const DEFAULT_FURNITURE = [
-    { id: 2, name: 'Perchero pie', largo: 30, ancho: 30, x: 100, y: 15, rotated: false, locked: false, category: 'entry' },
-    { id: 3, name: 'Mesa de adorno', largo: 80, ancho: 40, x: 0, y: 15, rotated: false, locked: false, category: 'decor' },
-    { id: 4, name: 'Estante grande', largo: 90, ancho: 45, x: 0, y: 60, rotated: true, locked: false, category: 'storage' },
-    { id: 5, name: 'Comoda grande', largo: 130, ancho: 43, x: 0, y: 155, rotated: true, locked: false, category: 'storage' },
-    { id: 6, name: 'Escritorio', largo: 120, ancho: 60, x: 0, y: 320, rotated: true, locked: false, category: 'work' },
-    { id: 7, name: 'Gavetero verde', largo: 41, ancho: 36, x: 0, y: 543, rotated: false, locked: false, category: 'storage' },
-    { id: 8, name: 'Cama', largo: 195, ancho: 145, x: 40, y: 439, rotated: false, locked: false, category: 'sleep' },
-    { id: 9, name: 'Mesa de noche', largo: 38, ancho: 28, x: 196, y: 546, rotated: false, locked: false, category: 'decor' },
-    { id: 10, name: 'TV', largo: 60, ancho: 10, x: 214, y: 380, rotated: true, locked: true, category: 'fixed' },
-    { id: 11, name: 'Estante blanco', largo: 61, ancho: 30, x: 194, y: 310, rotated: true, locked: false, category: 'storage' },
+    // Posiciones y tamanos reales (cm). rotated=false -> ocupa largo (horizontal) x ancho (vertical).
+    // rotated=true -> ocupa ancho (horizontal) x largo (vertical).
+    { id: 2, name: 'Perchero pie', largo: 30, ancho: 30, x: 130, y: 38, rotated: false, locked: false, category: 'entry' },
+    { id: 3, name: 'Mesa de adorno', largo: 80, ancho: 40, x: 45, y: 32, rotated: false, locked: false, category: 'decor' },
+    { id: 4, name: 'Estante grande', largo: 90, ancho: 45, x: 0, y: 42, rotated: true, locked: false, category: 'storage' },
+    { id: 5, name: 'Comoda grande', largo: 130, ancho: 43, x: 0, y: 135, rotated: true, locked: false, category: 'storage' },
+    { id: 6, name: 'Escritorio', largo: 120, ancho: 60, x: 0, y: 268, rotated: true, locked: false, category: 'work' },
+    { id: 7, name: 'Gavetero verde', largo: 41, ancho: 36, x: 0, y: 543, rotated: true, locked: false, category: 'storage' },
+    { id: 8, name: 'Cama', largo: 195, ancho: 145, x: 39, y: 389, rotated: true, locked: false, category: 'sleep' },
+    { id: 9, name: 'Mesa de noche', largo: 38, ancho: 28, x: 186, y: 546, rotated: true, locked: false, category: 'decor' },
+    { id: 10, name: 'TV', largo: 50, ancho: 6, x: 170, y: 302, rotated: false, locked: true, category: 'fixed' },
+    { id: 11, name: 'Estante blanco', largo: 61, ancho: 30, x: 178, y: 310, rotated: true, locked: false, category: 'storage' },
     { id: 13, name: 'Perchero de pared', largo: 180, ancho: 50, x: 174, y: 100, rotated: true, locked: false, category: 'entry' },
-    { id: 14, name: 'Comoda pequena', largo: 63, ancho: 40, x: 160, y: 20, rotated: true, locked: false, category: 'storage' },
+    { id: 14, name: 'Comoda pequena', largo: 63, ancho: 40, x: 184, y: 25, rotated: true, locked: false, category: 'storage' },
 ];
 
 let furnitureList = JSON.parse(JSON.stringify(DEFAULT_FURNITURE));
@@ -387,17 +391,18 @@ function renderRoom() {
     canvas.style.width = canvasW + 'px';
     canvas.style.height = canvasH + 'px';
 
-    // Division line (horizontal)
+    // Division: pedazo de pared que sale de la pared derecha (75cm de largo x 10cm de grosor).
+    // Su cara inferior esta a DIVISION_Y (300cm desde arriba).
     const divLine = document.getElementById('divLine');
     const divY = DIVISION_Y * SCALE;
-    divLine.style.left = '0';
-    divLine.style.top = divY + 'px';
-    divLine.style.width = '100%';
-    divLine.style.height = '3px';
+    divLine.style.left = ((ROOM_ANCHO - DIVISION_LARGO) * SCALE) + 'px';
+    divLine.style.top = ((DIVISION_Y - DIVISION_GROSOR) * SCALE) + 'px';
+    divLine.style.width = (DIVISION_LARGO * SCALE) + 'px';
+    divLine.style.height = (DIVISION_GROSOR * SCALE) + 'px';
 
     const divLabel = document.getElementById('divLabel');
-    divLabel.style.top = (divY - 9) + 'px';
-    divLabel.style.left = '50%';
+    divLabel.style.top = ((DIVISION_Y - DIVISION_GROSOR) * SCALE - 11) + 'px';
+    divLabel.style.left = ((ROOM_ANCHO - DIVISION_LARGO / 2) * SCALE) + 'px';
     divLabel.style.transform = 'translateX(-50%)';
 
     // Medidas en cada pared
@@ -415,12 +420,15 @@ function renderRoom() {
     setWall('wallRightA', DIVISION_Y + ' cm', 2, topLen - 4);
     setWall('wallRightB', (ROOM_LARGO - DIVISION_Y) + ' cm', topLen + 2, botLen - 4);
 
+    // Balcon: franja de 28cm arriba
+    document.querySelector('.balcon-indicator').style.height = (28 * SCALE) + 'px';
+
     // Door indicator (top right)
     const door = document.getElementById('doorIndicator');
-    door.style.top = '0px';
-    door.style.right = '5px';
-    door.style.width = (40 * SCALE) + 'px';
-    door.style.height = '14px';
+    door.style.top = (5 * SCALE) + 'px';
+    door.style.right = '0px';
+    door.style.width = (75 * SCALE) + 'px';
+    door.style.height = (20 * SCALE) + 'px';
 
     // Remove old furniture
     canvas.querySelectorAll('.furniture-item').forEach(el => el.remove());

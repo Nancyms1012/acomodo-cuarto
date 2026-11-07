@@ -83,6 +83,9 @@ Según la descripción de la usuaria:
 - `openEditModal`, `saveEdit`: edición de nombre, medidas y posición.
 - `toggleLockSelected`, `rotateSelected`, `deleteSelected`, `addFurniture`: acciones de la barra.
 - `toggleCotas`, `showCotas`: líneas de medida (cotas) en los bordes de cada mueble. Se dibujan solo si caben (ancho en pantalla >= 34 px para la cota horizontal, alto >= 34 px para la vertical).
+- `computeArea()`: área ocupada (muebles, puerta y división) marcando celdas de 1 cm², así lo que se solapa no se cuenta dos veces. El espacio libre incluye la franja del balcón y los huecos angostos que no sirven para pasar; es área de piso sin ocupar, no área "utilizable".
+- `computeGaps(f)`: distancia libre de un mueble hacia los cuatro lados hasta el obstáculo más cercano (otro mueble, la división o la pared). Solo cuenta obstáculos que se enfrentan al mueble (se traslapan en el otro eje). `updateSpace()` escribe el resumen en la barra azul y dibuja las líneas amarillas.
+- `updateGrid()`, `toggleGrid()`, `toggleSnap()`, `snapAxis()`: cuadrícula de 10 cm (marcada cada 50 cm) e imán al arrastrar.
 - `rotateSelected` intercambia el ancho y el alto dibujados, rota alrededor del centro y recorta la posición para que el mueble no se salga del cuarto. Antes giraba alrededor de la esquina superior izquierda y la cama (145×195 en x=39) quedaba saliéndose del cuarto al rotar (39 + 195 = 234 > 224).
 - `saveToLocal` y `loadFromLocal`: persistencia en `localStorage` y migración del perchero.
 
@@ -95,12 +98,14 @@ Según la descripción de la usuaria:
 | 7 nov 2026 | Medidas en cada pared |
 | 7 nov 2026 | Dimensiones corregidas: cama de pie, división de 75 cm, puerta y balcón a escala, posiciones sin solapes |
 | 7 nov 2026 | Medidas visibles en cada mueble y edición de medidas, nombre y posición |
+| 7 nov 2026 | Espacio libre del cuarto (m² y %), distancias libres alrededor del mueble seleccionado, cuadrícula de 10 cm e imán |
 | 7 nov 2026 | La puerta pasa a ser un cuadro de 75 × 75 cm sobre la pared derecha (antes un rectángulo de 75 × 20 arriba). Es un elemento de la lista, con cotas y editable. El perchero de pie se movió a (120, 78) para no tapar la zona de la puerta |
 | 7 nov 2026 | Cotas (líneas de medida) en cada mueble. Rotar ahora gira alrededor del centro y mantiene el mueble dentro del cuarto |
 
 ## Pendientes e ideas
 
-- Aviso cuando dos muebles se solapan.
+- Aviso cuando dos muebles se solapan (hoy el solape solo se nota en el dibujo y porque el área ocupada no suma doble).
+- Medir pasillos: ancho mínimo de paso entre muebles.
 - Aviso cuando la cama queda a menos de 38 cm de una pared lateral.
 - Agregar el espejo de pie que reemplazaría a la cómoda pequeña (se puede crear con "+ Agregar", por ejemplo 50 × 12 cm).
 - Confirmar la ubicación de la TV.

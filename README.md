@@ -19,6 +19,9 @@ Todo es HTML, CSS y JavaScript en un solo archivo por página. No hay dependenci
 - **Mover:** arrastra un mueble (mouse o dedo).
 - **Seleccionar:** toca el mueble. Arriba se ve su nombre y medidas.
 - **Rotar:** botón "Rotar" (gira el mueble 90° alrededor de su centro y lo mantiene dentro del cuarto). Las medidas no cambian: solo se intercambian el ancho y el alto dibujados. Si rotado no cabe en el cuarto, avisa y no lo gira.
+- **Espacio libre:** la barra azul de arriba muestra el espacio libre del cuarto en m² y en % (descontando muebles, puerta y división, sin contar dos veces lo que se solapa). Al seleccionar un mueble muestra además cuántos cm hay libres a su izquierda, derecha, arriba y abajo hasta lo más cercano (otro mueble, la división o la pared), y dibuja esas distancias en el plano con líneas amarillas. Se actualiza mientras arrastras.
+- **Cuadrícula 10 cm:** botón "Cuadricula 10 cm". Líneas finas cada 10 cm y más marcadas cada 50 cm.
+- **Imán:** botón "Iman". Al arrastrar, ajusta el mueble a múltiplos de 10 cm, o lo pega a la pared opuesta si queda a menos de 5 cm. Para medidas exactas usa "Medidas".
 - **Cotas:** botón "Cotas" muestra u oculta las líneas de medida en los bordes de cada mueble (ancho arriba, alto a la izquierda, en cm), igual que las de las paredes. Se actualizan al rotar o cambiar medidas.
 - **Medidas:** botón "Medidas", o doble toque sobre el mueble, o "Medidas" en la lista. Permite cambiar nombre, largo, ancho y posición (X, Y). El mueble se mantiene dentro del cuarto.
 - **Fijar/Soltar:** bloquea o libera un mueble. Un mueble fijo no se arrastra ni se rota. Solo la TV está fija por defecto.
@@ -51,6 +54,8 @@ El planificador guarda los cambios en el navegador (`localStorage`), así que so
 | `roomPlanner` | Lista de muebles con sus medidas y posiciones |
 | `roomPlannerNextId` | Siguiente id para muebles nuevos |
 | `roomPlannerPercheroLibre` | Marca de una migración que soltó el perchero de pared |
+| `roomPlannerPuerta75` | Marca de la migración que agregó la puerta de 75 × 75 |
+| `roomPlannerCotas`, `roomPlannerGrid`, `roomPlannerSnap` | Preferencias de cotas, cuadrícula e imán |
 
 Si se cambian las posiciones iniciales en el código, quien ya tenga datos guardados sigue viendo los viejos hasta pulsar Reset.
 

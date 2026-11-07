@@ -62,6 +62,21 @@
             text-align: center;
         }
         .info-bar span { color: #00d4ff; font-weight: bold; }
+        #spaceInfo { margin-top: 2px; color: #cfd8e3; line-height: 1.4; }
+        #spaceInfo b { color: #ffeb3b; }
+        .toolbar button.on { box-shadow: 0 0 0 2px #fff inset; }
+        .grid-layer {
+            position: absolute; left: 0; top: 0; right: 0; bottom: 0;
+            pointer-events: none; display: none;
+        }
+        .gap-line { position: absolute; pointer-events: none; z-index: 90; }
+        .gap-line.h { border-top: 1px dashed #ffeb3b; height: 0; }
+        .gap-line.v { border-left: 1px dashed #ffeb3b; width: 0; }
+        .gap-line .gap-label {
+            position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.75); color: #ffeb3b; font-size: 8px; font-weight: bold;
+            padding: 0 3px; border-radius: 3px; white-space: nowrap; line-height: 1.3;
+        }
 
         .canvas-area {
             flex: 1;
@@ -304,7 +319,9 @@
         <button class="btn-rotate" onclick="rotateSelected()">Rotar</button>
         <button class="btn-lock" onclick="toggleLockSelected()">Fijar/Soltar</button>
         <button class="btn-edit" onclick="openEditModal()">Medidas</button>
-        <button class="btn-cotas" onclick="toggleCotas()">Cotas</button>
+        <button class="btn-cotas" id="btnCotas" onclick="toggleCotas()">Cotas</button>
+        <button class="btn-cotas" id="btnGrid" onclick="toggleGrid()">Cuadricula 10 cm</button>
+        <button class="btn-cotas" id="btnSnap" onclick="toggleSnap()">Iman</button>
         <button class="btn-delete" onclick="deleteSelected()">Eliminar</button>
         <button class="btn-list" onclick="togglePanel()">Lista</button>
         <button class="btn-reset" onclick="resetLayout()">Reset</button>
@@ -312,9 +329,11 @@
     </div>
     <div class="info-bar">
         Seleccionado: <span id="selectedInfo">ninguno</span>
+        <div id="spaceInfo"></div>
     </div>
     <div class="canvas-area" id="canvasArea">
         <div class="room-canvas" id="roomCanvas">
+            <div class="grid-layer" id="gridLayer"></div>
             <div class="balcon-indicator">BALCON</div>
             <div class="division-line" id="divLine"></div>
             <div class="div-label" id="divLabel">DIVISION</div>
@@ -562,10 +581,141 @@ function renderRoom() {
     });
 
     updatePanel();
+    updateGrid();
+    updateSpace();
 }
 
 let lastTap = { id: null, time: 0 };
 let showCotas = localStorage.getItem('roomPlannerCotas') !== '0';
+let showGrid = localStorage.getItem('roomPlannerGrid') !== '0';
+let snapOn = localStorage.getItem('roomPlannerSnap') === '1';
+
+// ---------- Cuadricula de 10 cm e iman ----------
+function updateGrid() {
+    const g = document.getElementById('gridLayer');
+    g.style.display = showGrid ? 'block' : 'none';
+    const s10 = 10 * SCALE, s50 = 50 * SCALE;
+    // lineas finas cada 10 cm y mas marcadas cada 50 cm
+    g.style.backgroundImage =
+        'linear-gradient(to right, rgba(255,255,255,0.22) 1px, transparent 1px),' +
+        'linear-gradient(to bottom, rgba(255,255,255,0.22) 1px, transparent 1px),' +
+        'linear-gradient(to right, rgba(255,255,255,0.07) 1px, transparent 1px),' +
+        'linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px)';
+    g.style.backgroundSize = s50 + 'px ' + s50 + 'px,' + s50 + 'px ' + s50 + 'px,' + s10 + 'px ' + s10 + 'px,' + s10 + 'px ' + s10 + 'px';
+    document.getElementById('btnGrid').classList.toggle('on', showGrid);
+    document.getElementById('btnSnap').classList.toggle('on', snapOn);
+    document.getElementById('btnCotas').classList.toggle('on', showCotas);
+}
+
+function toggleGrid() {
+    showGrid = !showGrid;
+    localStorage.setItem('roomPlannerGrid', showGrid ? '1' : '0');
+    updateGrid();
+}
+
+function toggleSnap() {
+    snapOn = !snapOn;
+    localStorage.setItem('roomPlannerSnap', snapOn ? '1' : '0');
+    updateGrid();
+}
+
+// Iman: ajusta a multiplos de 10 cm, o pega el mueble a la pared opuesta si esta a menos de 5 cm
+function snapAxis(v, maxV) {
+    const grid = Math.round(v / 10) * 10;
+    return Math.abs(v - maxV) < Math.abs(v - grid) && Math.abs(v - maxV) <= 5 ? maxV : grid;
+}
+
+// ---------- Espacio libre ----------
+function rectOf(f) {
+    const w = f.rotated ? f.ancho : f.largo;
+    const h = f.rotated ? f.largo : f.ancho;
+    return { x: f.x, y: f.y, w: w, h: h, r: f.x + w, b: f.y + h };
+}
+
+// Pedazo de pared de la division (tambien ocupa espacio)
+function divisionRect() {
+    return { x: ROOM_ANCHO - DIVISION_LARGO, r: ROOM_ANCHO, y: DIVISION_Y - DIVISION_GROSOR, b: DIVISION_Y };
+}
+
+// Area ocupada por los muebles, la puerta y la division, sin contar dos veces lo que se solapa
+function computeArea() {
+    const W = ROOM_ANCHO, H = ROOM_LARGO;
+    const occ = new Uint8Array(W * H);
+    const mark = r => {
+        const x0 = Math.max(0, Math.floor(r.x)), x1 = Math.min(W, Math.ceil(r.r));
+        const y0 = Math.max(0, Math.floor(r.y)), y1 = Math.min(H, Math.ceil(r.b));
+        for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) occ[y * W + x] = 1;
+    };
+    mark(divisionRect());
+    furnitureList.forEach(f => mark(rectOf(f)));
+    let used = 0;
+    for (let i = 0; i < occ.length; i++) used += occ[i];
+    return { total: W * H, used: used, free: W * H - used };
+}
+
+// Distancia libre desde un mueble hasta lo mas cercano (otro mueble, la division o la pared)
+function computeGaps(f) {
+    const R = rectOf(f);
+    const res = {
+        left: { d: R.x, lo: R.y, hi: R.b },
+        right: { d: ROOM_ANCHO - R.r, lo: R.y, hi: R.b },
+        up: { d: R.y, lo: R.x, hi: R.r },
+        down: { d: ROOM_LARGO - R.b, lo: R.x, hi: R.r }
+    };
+    const obs = furnitureList.filter(o => o.id !== f.id).map(rectOf);
+    obs.push(divisionRect());
+    obs.forEach(o => {
+        if (o.y < R.b && o.b > R.y) {
+            const lo = Math.max(o.y, R.y), hi = Math.min(o.b, R.b);
+            if (o.r <= R.x && R.x - o.r < res.left.d) res.left = { d: R.x - o.r, lo: lo, hi: hi };
+            if (o.x >= R.r && o.x - R.r < res.right.d) res.right = { d: o.x - R.r, lo: lo, hi: hi };
+        }
+        if (o.x < R.r && o.r > R.x) {
+            const lo = Math.max(o.x, R.x), hi = Math.min(o.r, R.r);
+            if (o.b <= R.y && R.y - o.b < res.up.d) res.up = { d: R.y - o.b, lo: lo, hi: hi };
+            if (o.y >= R.b && o.y - R.b < res.down.d) res.down = { d: o.y - R.b, lo: lo, hi: hi };
+        }
+    });
+    return res;
+}
+
+function addGapLine(canvas, orient, x, y, len, text) {
+    const el = document.createElement('div');
+    el.className = 'gap-line ' + orient;
+    el.style.left = (x * SCALE) + 'px';
+    el.style.top = (y * SCALE) + 'px';
+    if (orient === 'h') el.style.width = (len * SCALE) + 'px';
+    else el.style.height = (len * SCALE) + 'px';
+    el.innerHTML = '<span class="gap-label">' + text + '</span>';
+    canvas.appendChild(el);
+}
+
+function updateSpace() {
+    const canvas = document.getElementById('roomCanvas');
+    canvas.querySelectorAll('.gap-line').forEach(el => el.remove());
+
+    const a = computeArea();
+    const m2 = n => (n / 10000).toFixed(2);
+    const pct = n => Math.round(n / a.total * 100);
+    let html = 'Espacio libre: <b>' + m2(a.free) + ' m\u00b2</b> (' + pct(a.free) + '%) \u00b7 ocupado ' +
+        m2(a.used) + ' m\u00b2 de ' + m2(a.total) + ' m\u00b2';
+
+    const f = furnitureList.find(x => x.id === selectedId);
+    if (f) {
+        const g = computeGaps(f);
+        const R = rectOf(f);
+        const v = o => Math.max(0, Math.round(o.d * 10) / 10);
+        html += '<br>Libre alrededor de ' + esc(f.name) + ': \u2190 <b>' + fmt(v(g.left)) + '</b> \u00b7 \u2192 <b>' +
+            fmt(v(g.right)) + '</b> \u00b7 \u2191 <b>' + fmt(v(g.up)) + '</b> \u00b7 \u2193 <b>' + fmt(v(g.down)) + '</b> cm';
+        if (g.left.d > 0) addGapLine(canvas, 'h', R.x - g.left.d, (g.left.lo + g.left.hi) / 2, g.left.d, fmt(v(g.left)));
+        if (g.right.d > 0) addGapLine(canvas, 'h', R.r, (g.right.lo + g.right.hi) / 2, g.right.d, fmt(v(g.right)));
+        if (g.up.d > 0) addGapLine(canvas, 'v', (g.up.lo + g.up.hi) / 2, R.y - g.up.d, g.up.d, fmt(v(g.up)));
+        if (g.down.d > 0) addGapLine(canvas, 'v', (g.down.lo + g.down.hi) / 2, R.b, g.down.d, fmt(v(g.down)));
+    } else {
+        html += '<br>Toca un mueble para ver cu\u00e1nto espacio libre tiene a cada lado.';
+    }
+    document.getElementById('spaceInfo').innerHTML = html;
+}
 
 function fmt(n) { return String(Math.round(n * 10) / 10); }
 
@@ -616,6 +766,10 @@ function onDrag(e) {
     let ny = (cy - rect.top - dragOffset.y) / SCALE;
     const fw = dragging.rotated ? dragging.ancho : dragging.largo;
     const fh = dragging.rotated ? dragging.largo : dragging.ancho;
+    if (snapOn) {
+        nx = snapAxis(nx, ROOM_ANCHO - fw);
+        ny = snapAxis(ny, ROOM_LARGO - fh);
+    }
     nx = Math.max(0, Math.min(nx, ROOM_ANCHO - fw));
     ny = Math.max(0, Math.min(ny, ROOM_LARGO - fh));
     dragging.x = Math.round(nx);
@@ -625,6 +779,7 @@ function onDrag(e) {
         el.style.left = (dragging.x * SCALE) + 'px';
         el.style.top = (dragging.y * SCALE) + 'px';
     }
+    updateSpace();
 }
 
 function endDrag() {

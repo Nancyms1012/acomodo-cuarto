@@ -168,6 +168,17 @@
             font-size: 7px;
             overflow: hidden;
         }
+        .furniture-item .f-dim {
+            display: block;
+            font-weight: normal;
+            font-size: 7px;
+            opacity: 0.9;
+        }
+        .btn-edit { background: #00d4ff; color: #000; }
+        .modal .hint { font-size: 10px; color: #888; margin-top: 8px; line-height: 1.4; }
+        .modal .row2 { display: flex; gap: 8px; }
+        .modal .row2 > div { flex: 1; }
+        .pi-edit { background: #00d4ff; color: #000; margin-right: 4px; }
 
         /* Modal */
         .modal-overlay {
@@ -268,6 +279,7 @@
         <button class="btn-add" onclick="openAddModal()">+ Agregar</button>
         <button class="btn-rotate" onclick="rotateSelected()">Rotar</button>
         <button class="btn-lock" onclick="toggleLockSelected()">Fijar/Soltar</button>
+        <button class="btn-edit" onclick="openEditModal()">Medidas</button>
         <button class="btn-delete" onclick="deleteSelected()">Eliminar</button>
         <button class="btn-list" onclick="togglePanel()">Lista</button>
         <button class="btn-reset" onclick="resetLayout()">Reset</button>
@@ -315,6 +327,40 @@
         <div class="modal-buttons">
             <button class="btn-cancel" onclick="closeAddModal()">Cancelar</button>
             <button class="btn-confirm" onclick="addFurniture()">Agregar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal editar medidas -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal">
+        <h2>Editar mueble</h2>
+        <label>Nombre</label>
+        <input type="text" id="eName" maxlength="40">
+        <div class="row2">
+            <div>
+                <label>Largo (cm)</label>
+                <input type="number" id="eLargo" min="1" max="584">
+            </div>
+            <div>
+                <label>Ancho (cm)</label>
+                <input type="number" id="eAncho" min="1" max="584">
+            </div>
+        </div>
+        <div class="row2">
+            <div>
+                <label>Posicion X (cm)</label>
+                <input type="number" id="eX">
+            </div>
+            <div>
+                <label>Posicion Y (cm)</label>
+                <input type="number" id="eY">
+            </div>
+        </div>
+        <div class="hint" id="eHint"></div>
+        <div class="modal-buttons">
+            <button class="btn-cancel" onclick="closeEditModal()">Cancelar</button>
+            <button class="btn-confirm" onclick="saveEdit()">Guardar</button>
         </div>
     </div>
 </div>
@@ -451,16 +497,36 @@ function renderRoom() {
         el.style.top = (f.y * SCALE) + 'px';
 
         el.dataset.id = f.id;
-        el.innerHTML = '<span class="f-label">' + f.name + '</span>';
+        const dimText = Math.round(f.rotated ? f.ancho : f.largo) + '\u00d7' + Math.round(f.rotated ? f.largo : f.ancho);
+        el.title = f.name + ' ' + dimText + ' cm';
+        // Los muebles muy pequenos en pantalla solo muestran la medida (el nombre va en el tooltip)
+        if (h >= 22 && w >= 30) {
+            el.innerHTML = '<span class="f-label">' + esc(f.name) + '<span class="f-dim">' + dimText + '</span></span>';
+        } else if (h >= 9 && w >= 22) {
+            el.innerHTML = '<span class="f-label">' + dimText + '</span>';
+        }
 
         el.addEventListener('mousedown', (e) => startDrag(e, f));
         el.addEventListener('touchstart', (e) => startDrag(e, f), { passive: false });
-        el.addEventListener('click', () => selectFurniture(f.id));
+        el.addEventListener('click', () => {
+            // Doble toque / doble click abre el editor de medidas
+            const now = Date.now();
+            const isDouble = lastTap.id === f.id && now - lastTap.time < 400;
+            lastTap = { id: f.id, time: now };
+            selectFurniture(f.id);
+            if (isDouble) { lastTap = { id: null, time: 0 }; openEditModal(); }
+        });
 
         canvas.appendChild(el);
     });
 
     updatePanel();
+}
+
+let lastTap = { id: null, time: 0 };
+
+function esc(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
 function selectFurniture(id) {
@@ -571,6 +637,58 @@ function addFurniture() {
     saveToLocal();
 }
 
+// Editar nombre, medidas y posicion de un mueble
+let editingId = null;
+
+function openEditModal(id) {
+    const fid = id !== undefined ? id : selectedId;
+    const f = furnitureList.find(x => x.id === fid);
+    if (!f) { alert('Selecciona un mueble primero'); return; }
+    editingId = f.id;
+    document.getElementById('eName').value = f.name;
+    document.getElementById('eLargo').value = f.largo;
+    document.getElementById('eAncho').value = f.ancho;
+    document.getElementById('eX').value = f.x;
+    document.getElementById('eY').value = f.y;
+    document.getElementById('eHint').textContent =
+        'Largo y ancho son las medidas del mueble. Se dibuja ' +
+        (f.rotated ? f.ancho + '\u00d7' + f.largo : f.largo + '\u00d7' + f.ancho) +
+        ' cm (horizontal \u00d7 vertical); usa "Rotar" para girarlo. ' +
+        'Cuarto: ' + ROOM_ANCHO + '\u00d7' + ROOM_LARGO + ' cm.';
+    document.getElementById('editModal').classList.add('active');
+}
+
+function closeEditModal() {
+    editingId = null;
+    document.getElementById('editModal').classList.remove('active');
+}
+
+function saveEdit() {
+    const f = furnitureList.find(x => x.id === editingId);
+    if (!f) { closeEditModal(); return; }
+    const name = document.getElementById('eName').value.trim();
+    const largo = parseFloat(document.getElementById('eLargo').value);
+    const ancho = parseFloat(document.getElementById('eAncho').value);
+    const x = parseFloat(document.getElementById('eX').value);
+    const y = parseFloat(document.getElementById('eY').value);
+    if (!name || !(largo >= 1) || !(ancho >= 1)) { alert('Escribe un nombre y medidas mayores a 0'); return; }
+    if (largo > ROOM_LARGO || ancho > ROOM_LARGO) { alert('Las medidas no pueden ser mayores que el cuarto'); return; }
+    const w = f.rotated ? ancho : largo;
+    const h = f.rotated ? largo : ancho;
+    if (w > ROOM_ANCHO) { alert('Con esa medida el mueble no cabe en el ancho del cuarto (' + ROOM_ANCHO + ' cm). Prueba rotarlo.'); return; }
+    f.name = name;
+    f.largo = Math.round(largo * 10) / 10;
+    f.ancho = Math.round(ancho * 10) / 10;
+    // Mantener el mueble dentro del cuarto
+    const nx = isNaN(x) ? f.x : x;
+    const ny = isNaN(y) ? f.y : y;
+    f.x = Math.round(Math.max(0, Math.min(nx, ROOM_ANCHO - w)));
+    f.y = Math.round(Math.max(0, Math.min(ny, ROOM_LARGO - h)));
+    closeEditModal();
+    selectFurniture(f.id);
+    saveToLocal();
+}
+
 function togglePanel() {
     document.getElementById('listPanel').classList.toggle('active');
     updatePanel();
@@ -583,8 +701,9 @@ function updatePanel() {
         const col = COLORS[f.category] || COLORS.storage;
         list.innerHTML += '<div class="panel-item">' +
             '<div class="pi-color" style="background:' + col.border + '"></div>' +
-            '<div class="pi-info"><div class="pi-name">' + f.name + (f.locked ? ' (fijo)' : '') + '</div>' +
+            '<div class="pi-info"><div class="pi-name">' + esc(f.name) + (f.locked ? ' (fijo)' : '') + '</div>' +
             '<div class="pi-size">' + f.largo + 'x' + f.ancho + 'cm</div></div>' +
+            '<button class="pi-edit" onclick="openEditModal(' + f.id + ')">Medidas</button>' +
             (f.locked ? '' : '<button class="pi-del" onclick="deleteFurnitureById(' + f.id + ')">X</button>') +
             '</div>';
     });

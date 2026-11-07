@@ -1,0 +1,73 @@
+# Acomodo del cuarto
+
+Planificador para probar distintas formas de acomodar los muebles de mi cuarto, con las medidas reales y sin instalar nada.
+
+Página publicada: https://nancyms1012.github.io/acomodo-cuarto/planner.html
+
+## Páginas
+
+| Archivo | Qué es |
+|---|---|
+| `planner.html` | Planificador interactivo. Se arrastran los muebles sobre el plano a escala. |
+| `index.html` | Propuesta NUEVA del acomodo (estática), con enlace al planificador. |
+| `actual.html` | Acomodo ACTUAL (estático), para comparar. |
+
+Todo es HTML, CSS y JavaScript en un solo archivo por página. No hay dependencias ni paso de compilación.
+
+## Cómo usar el planificador
+
+- **Mover:** arrastra un mueble (mouse o dedo).
+- **Seleccionar:** toca el mueble. Arriba se ve su nombre y medidas.
+- **Rotar:** botón "Rotar" (gira el mueble 90°).
+- **Medidas:** botón "Medidas", o doble toque sobre el mueble, o "Medidas" en la lista. Permite cambiar nombre, largo, ancho y posición (X, Y). El mueble se mantiene dentro del cuarto.
+- **Fijar/Soltar:** bloquea o libera un mueble. Un mueble fijo no se arrastra ni se rota. Solo la TV está fija por defecto.
+- **+ Agregar:** crea un mueble nuevo con nombre, largo, ancho y categoría.
+- **Eliminar:** quita el mueble seleccionado (si está fijo, primero hay que soltarlo).
+- **Lista:** panel con todos los muebles y sus medidas.
+- **Reset:** vuelve a la distribución inicial. Borra los cambios guardados.
+- **Exportar:** descarga un `.txt` con la posición de cada mueble.
+
+Cada mueble muestra su nombre y sus medidas (ancho × alto en cm, tal como se ve en el dibujo). Los muebles muy pequeños muestran solo la medida, o nada; el nombre y la medida siempre están en el tooltip al pasar el mouse.
+
+## Medidas del cuarto
+
+El plano está dibujado a escala en centímetros.
+
+- Pared de arriba (balcón y puerta): 220 cm.
+- Pared de abajo (cama): 224 cm.
+- Paredes izquierda y derecha: 300 cm en la mitad de la puerta y 284 cm en la mitad de la cama (584 cm en total).
+- La división es un pedazo de pared de 75 × 10 cm que sale de la pared derecha.
+- La pared de arriba es un balcón con cortina (franja de 28 cm en el dibujo).
+
+El detalle de los muebles y las decisiones están en [CONTEXTO.md](CONTEXTO.md).
+
+## Datos guardados
+
+El planificador guarda los cambios en el navegador (`localStorage`), así que solo se ven en el mismo navegador y equipo.
+
+| Clave | Contenido |
+|---|---|
+| `roomPlanner` | Lista de muebles con sus medidas y posiciones |
+| `roomPlannerNextId` | Siguiente id para muebles nuevos |
+| `roomPlannerPercheroLibre` | Marca de una migración que soltó el perchero de pared |
+
+Si se cambian las posiciones iniciales en el código, quien ya tenga datos guardados sigue viendo los viejos hasta pulsar Reset.
+
+## Probar en local
+
+Abre `planner.html` en el navegador. No necesita servidor.
+
+## Publicar
+
+El sitio se publica con GitHub Pages desde la rama `main`. Al hacer push a `main`, la página se actualiza en uno o dos minutos. Para ver el cambio, recarga con Ctrl+F5.
+
+```
+git add planner.html
+git commit -m "Descripción del cambio"
+git push origin main
+```
+
+## Respaldos relacionados
+
+- Editor interactivo anterior (archivo único, sin GitHub): `Documents\CUARTO-PLANO\cuarto-interactivo.html`.
+- Notas de la conversación original: `Documents\CUARTO-PLANO\NOTAS-CUARTO.md`.

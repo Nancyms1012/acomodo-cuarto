@@ -70,9 +70,24 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 10px;
+            padding: 30px;
             -webkit-overflow-scrolling: touch;
         }
+        .wall-label {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: #9fb3c8;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        .wall-top { left: 0; right: 0; top: -22px; height: 16px; border-top: 1px solid #9fb3c8; }
+        .wall-bottom { left: 0; right: 0; bottom: -22px; height: 16px; border-bottom: 1px solid #9fb3c8; }
+        .wall-left { left: -22px; width: 16px; writing-mode: vertical-rl; border-left: 1px solid #9fb3c8; }
+        .wall-right { right: -22px; width: 16px; writing-mode: vertical-rl; border-right: 1px solid #9fb3c8; }
         .room-canvas {
             position: relative;
             background: #2a2a4a;
@@ -267,6 +282,13 @@
             <div class="door-indicator" id="doorIndicator">Puerta</div>
             <div class="division-line" id="divLine"></div>
             <div class="div-label" id="divLabel">DIVISION</div>
+            <!-- Medidas de las paredes -->
+            <div class="wall-label wall-top" id="wallTop"></div>
+            <div class="wall-label wall-bottom" id="wallBottom"></div>
+            <div class="wall-label wall-left" id="wallLeftA"></div>
+            <div class="wall-label wall-left" id="wallLeftB"></div>
+            <div class="wall-label wall-right" id="wallRightA"></div>
+            <div class="wall-label wall-right" id="wallRightB"></div>
         </div>
     </div>
 </div>
@@ -310,7 +332,8 @@
 // Largo total = mitad1 (284) + mitad2 (300) = 584cm (vertical)
 const ROOM_ANCHO = 224; // horizontal
 const ROOM_LARGO = 584; // vertical (top to bottom)
-const DIVISION_Y = 284; // division at 284cm from top (end of mitad 1)
+const DIVISION_Y = 300; // division a 300cm desde arriba: mitad 2 (puerta) = 300cm, mitad 1 (cama) = 284cm
+const ANCHO_MITAD_2 = 220; // ancho de la mitad con la puerta (arriba)
 
 let SCALE = 1;
 let canvasW, canvasH;
@@ -348,8 +371,8 @@ let selectedId = null;
 
 function calculateScale() {
     const area = document.getElementById('canvasArea');
-    const availW = area.clientWidth - 20;
-    const availH = area.clientHeight - 20;
+    const availW = area.clientWidth - 60;
+    const availH = area.clientHeight - 60;
     const scaleW = availW / ROOM_ANCHO;
     const scaleH = availH / ROOM_LARGO;
     SCALE = Math.min(scaleW, scaleH, 2.0);
@@ -376,6 +399,21 @@ function renderRoom() {
     divLabel.style.top = (divY - 9) + 'px';
     divLabel.style.left = '50%';
     divLabel.style.transform = 'translateX(-50%)';
+
+    // Medidas en cada pared
+    const topLen = DIVISION_Y * SCALE;
+    const botLen = (ROOM_LARGO - DIVISION_Y) * SCALE;
+    const setWall = (id, text, top, height) => {
+        const el = document.getElementById(id);
+        el.textContent = text;
+        if (top !== undefined) { el.style.top = top + 'px'; el.style.height = height + 'px'; }
+    };
+    setWall('wallTop', ANCHO_MITAD_2 + ' cm');
+    setWall('wallBottom', ROOM_ANCHO + ' cm');
+    setWall('wallLeftA', DIVISION_Y + ' cm', 2, topLen - 4);
+    setWall('wallLeftB', (ROOM_LARGO - DIVISION_Y) + ' cm', topLen + 2, botLen - 4);
+    setWall('wallRightA', DIVISION_Y + ' cm', 2, topLen - 4);
+    setWall('wallRightB', (ROOM_LARGO - DIVISION_Y) + ' cm', topLen + 2, botLen - 4);
 
     // Door indicator (top right)
     const door = document.getElementById('doorIndicator');

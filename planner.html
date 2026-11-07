@@ -175,6 +175,30 @@
             opacity: 0.9;
         }
         .btn-edit { background: #00d4ff; color: #000; }
+        .btn-cotas { background: #0f3460; color: #00d4ff; border: 1px solid #00d4ff; }
+        .cota {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            pointer-events: none;
+            font-size: 7px;
+            font-weight: bold;
+            line-height: 1;
+        }
+        .cota .ln { flex: 1; background: currentColor; opacity: 0.55; }
+        .cota-h {
+            right: 2px; top: 2px; height: 9px;
+            flex-direction: row; gap: 2px; padding: 0 1px;
+            border-left: 1px solid currentColor; border-right: 1px solid currentColor;
+        }
+        .cota-h .ln { height: 1px; }
+        .cota-v {
+            left: 2px; bottom: 2px; width: 9px;
+            flex-direction: column; gap: 2px; padding: 1px 0;
+            border-top: 1px solid currentColor; border-bottom: 1px solid currentColor;
+        }
+        .cota-v .ln { width: 1px; }
+        .cota-v span { writing-mode: vertical-rl; }
         .modal .hint { font-size: 10px; color: #888; margin-top: 8px; line-height: 1.4; }
         .modal .row2 { display: flex; gap: 8px; }
         .modal .row2 > div { flex: 1; }
@@ -280,6 +304,7 @@
         <button class="btn-rotate" onclick="rotateSelected()">Rotar</button>
         <button class="btn-lock" onclick="toggleLockSelected()">Fijar/Soltar</button>
         <button class="btn-edit" onclick="openEditModal()">Medidas</button>
+        <button class="btn-cotas" onclick="toggleCotas()">Cotas</button>
         <button class="btn-delete" onclick="deleteSelected()">Eliminar</button>
         <button class="btn-list" onclick="togglePanel()">Lista</button>
         <button class="btn-reset" onclick="resetLayout()">Reset</button>
@@ -499,12 +524,29 @@ function renderRoom() {
         el.dataset.id = f.id;
         const dimText = Math.round(f.rotated ? f.ancho : f.largo) + '\u00d7' + Math.round(f.rotated ? f.largo : f.ancho);
         el.title = f.name + ' ' + dimText + ' cm';
-        // Los muebles muy pequenos en pantalla solo muestran la medida (el nombre va en el tooltip)
-        if (h >= 22 && w >= 30) {
-            el.innerHTML = '<span class="f-label">' + esc(f.name) + '<span class="f-dim">' + dimText + '</span></span>';
+        // Cotas: lineas de medida en los bordes del mueble (como las de las paredes del cuarto).
+        // Siempre muestran el ancho y el alto tal como se ve dibujado (ya rotado).
+        const wCm = f.rotated ? f.ancho : f.largo;
+        const hCm = f.rotated ? f.largo : f.ancho;
+        const showH = showCotas && w >= 34 && h >= 14;
+        const showV = showCotas && h >= 34 && w >= 14;
+        const hasName = h >= 22 && w >= 30;
+        let html = '';
+        if (showH || showV) {
+            // Con cotas basta el nombre; la medida ya esta en las lineas
+            if (hasName) html += '<span class="f-label">' + esc(f.name) + '</span>';
+            if (showH) html += '<div class="cota cota-h" style="left:' + (showV ? 12 : 2) + 'px"><i class="ln"></i><span>' + fmt(wCm) + '</span><i class="ln"></i></div>';
+            if (showV) html += '<div class="cota cota-v" style="top:' + (showH ? 12 : 2) + 'px"><i class="ln"></i><span>' + fmt(hCm) + '</span><i class="ln"></i></div>';
+        } else if (hasName) {
+            // Sin cotas (apagadas o no caben): nombre + medida
+            html = '<span class="f-label">' + esc(f.name) + '<span class="f-dim">' + dimText + '</span></span>';
         } else if (h >= 9 && w >= 22) {
-            el.innerHTML = '<span class="f-label">' + dimText + '</span>';
+            html = '<span class="f-label">' + dimText + '</span>';
         }
+        el.innerHTML = html;
+        // El nombre se centra en el espacio que dejan las lineas de medida
+        if (showV) el.style.paddingLeft = '12px';
+        if (showH) el.style.paddingTop = '12px';
 
         el.addEventListener('mousedown', (e) => startDrag(e, f));
         el.addEventListener('touchstart', (e) => startDrag(e, f), { passive: false });
@@ -524,6 +566,15 @@ function renderRoom() {
 }
 
 let lastTap = { id: null, time: 0 };
+let showCotas = localStorage.getItem('roomPlannerCotas') !== '0';
+
+function fmt(n) { return String(Math.round(n * 10) / 10); }
+
+function toggleCotas() {
+    showCotas = !showCotas;
+    localStorage.setItem('roomPlannerCotas', showCotas ? '1' : '0');
+    renderRoom();
+}
 
 function esc(s) {
     return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -589,7 +640,21 @@ function endDrag() {
 function rotateSelected() {
     const f = furnitureList.find(x => x.id === selectedId);
     if (!f || f.locked) return;
+    const oldW = f.rotated ? f.ancho : f.largo;
+    const oldH = f.rotated ? f.largo : f.ancho;
+    const newW = oldH;
+    const newH = oldW;
+    if (newW > ROOM_ANCHO || newH > ROOM_LARGO) {
+        alert('Rotado no cabe en el cuarto (' + fmt(newW) + '\u00d7' + fmt(newH) + ' cm).');
+        return;
+    }
+    // Gira alrededor del centro del mueble (no de la esquina) y lo mantiene dentro del cuarto.
+    // Las medidas no cambian: solo se intercambian el ancho y el alto dibujados.
+    const cx = f.x + oldW / 2;
+    const cy = f.y + oldH / 2;
     f.rotated = !f.rotated;
+    f.x = Math.round(Math.max(0, Math.min(cx - newW / 2, ROOM_ANCHO - newW)));
+    f.y = Math.round(Math.max(0, Math.min(cy - newH / 2, ROOM_LARGO - newH)));
     renderRoom();
     saveToLocal();
 }

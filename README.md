@@ -18,7 +18,8 @@ Todo es HTML, CSS y JavaScript en un solo archivo por página. No hay dependenci
 
 - **Mover:** arrastra un mueble (mouse o dedo).
 - **Seleccionar:** toca el mueble. Arriba se ve su nombre y medidas.
-- **Rotar:** botón "Rotar" (gira el mueble 90°).
+- **Rotar:** botón "Rotar" (gira el mueble 90° alrededor de su centro y lo mantiene dentro del cuarto). Las medidas no cambian: solo se intercambian el ancho y el alto dibujados. Si rotado no cabe en el cuarto, avisa y no lo gira.
+- **Cotas:** botón "Cotas" muestra u oculta las líneas de medida en los bordes de cada mueble (ancho arriba, alto a la izquierda, en cm), igual que las de las paredes. Se actualizan al rotar o cambiar medidas.
 - **Medidas:** botón "Medidas", o doble toque sobre el mueble, o "Medidas" en la lista. Permite cambiar nombre, largo, ancho y posición (X, Y). El mueble se mantiene dentro del cuarto.
 - **Fijar/Soltar:** bloquea o libera un mueble. Un mueble fijo no se arrastra ni se rota. Solo la TV está fija por defecto.
 - **+ Agregar:** crea un mueble nuevo con nombre, largo, ancho y categoría.
@@ -27,7 +28,7 @@ Todo es HTML, CSS y JavaScript en un solo archivo por página. No hay dependenci
 - **Reset:** vuelve a la distribución inicial. Borra los cambios guardados.
 - **Exportar:** descarga un `.txt` con la posición de cada mueble.
 
-Cada mueble muestra su nombre y sus medidas (ancho × alto en cm, tal como se ve en el dibujo). Los muebles muy pequeños muestran solo la medida, o nada; el nombre y la medida siempre están en el tooltip al pasar el mouse.
+Cada mueble muestra su nombre y sus medidas (ancho × alto en cm, tal como se ve en el dibujo). Con las cotas encendidas, las medidas van en líneas sobre los bordes. Los muebles muy pequeños (por ejemplo la TV, de 50 × 6 cm) pueden mostrar solo la medida, o nada; el nombre y la medida siempre están en el tooltip al pasar el mouse. La preferencia de cotas se guarda en el navegador (`roomPlannerCotas`).
 
 ## Medidas del cuarto
 

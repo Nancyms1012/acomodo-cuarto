@@ -80,6 +80,8 @@ Según la descripción de la usuaria:
 - `startDrag`, `onDrag`, `endDrag`: arrastre con mouse y táctil. Los muebles se mantienen dentro del cuarto.
 - `openEditModal`, `saveEdit`: edición de nombre, medidas y posición.
 - `toggleLockSelected`, `rotateSelected`, `deleteSelected`, `addFurniture`: acciones de la barra.
+- `toggleCotas`, `showCotas`: líneas de medida (cotas) en los bordes de cada mueble. Se dibujan solo si caben (ancho en pantalla >= 34 px para la cota horizontal, alto >= 34 px para la vertical).
+- `rotateSelected` intercambia el ancho y el alto dibujados, rota alrededor del centro y recorta la posición para que el mueble no se salga del cuarto. Antes giraba alrededor de la esquina superior izquierda y la cama (145×195 en x=39) quedaba saliéndose del cuarto al rotar (39 + 195 = 234 > 224).
 - `saveToLocal` y `loadFromLocal`: persistencia en `localStorage` y migración del perchero.
 
 ## Historial de cambios
@@ -91,6 +93,7 @@ Según la descripción de la usuaria:
 | 7 nov 2026 | Medidas en cada pared |
 | 7 nov 2026 | Dimensiones corregidas: cama de pie, división de 75 cm, puerta y balcón a escala, posiciones sin solapes |
 | 7 nov 2026 | Medidas visibles en cada mueble y edición de medidas, nombre y posición |
+| 7 nov 2026 | Cotas (líneas de medida) en cada mueble. Rotar ahora gira alrededor del centro y mantiene el mueble dentro del cuarto |
 
 ## Pendientes e ideas
 

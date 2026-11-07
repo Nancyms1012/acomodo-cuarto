@@ -48,6 +48,7 @@
         .btn-add { background: #4ecdc4; color: #000; }
         .btn-delete { background: #ff6b6b; color: #fff; }
         .btn-rotate { background: #ffc107; color: #000; }
+        .btn-lock { background: #ff9800; color: #000; }
         .btn-export { background: #8bc34a; color: #000; }
         .btn-reset { background: #966fd6; color: #fff; }
         .btn-list { background: #0f3460; color: #00d4ff; border: 1px solid #00d4ff; }
@@ -251,6 +252,7 @@
     <div class="toolbar">
         <button class="btn-add" onclick="openAddModal()">+ Agregar</button>
         <button class="btn-rotate" onclick="rotateSelected()">Rotar</button>
+        <button class="btn-lock" onclick="toggleLockSelected()">Fijar/Soltar</button>
         <button class="btn-delete" onclick="deleteSelected()">Eliminar</button>
         <button class="btn-list" onclick="togglePanel()">Lista</button>
         <button class="btn-reset" onclick="resetLayout()">Reset</button>
@@ -336,7 +338,7 @@ const DEFAULT_FURNITURE = [
     { id: 9, name: 'Mesa de noche', largo: 38, ancho: 28, x: 196, y: 546, rotated: false, locked: false, category: 'decor' },
     { id: 10, name: 'TV', largo: 60, ancho: 10, x: 214, y: 380, rotated: true, locked: true, category: 'fixed' },
     { id: 11, name: 'Estante blanco', largo: 61, ancho: 30, x: 194, y: 310, rotated: true, locked: false, category: 'storage' },
-    { id: 13, name: 'Perchero fijo', largo: 180, ancho: 50, x: 174, y: 100, rotated: true, locked: true, category: 'fixed' },
+    { id: 13, name: 'Perchero de pared', largo: 180, ancho: 50, x: 174, y: 100, rotated: true, locked: false, category: 'entry' },
     { id: 14, name: 'Comoda pequena', largo: 63, ancho: 40, x: 160, y: 20, rotated: true, locked: false, category: 'storage' },
 ];
 
@@ -480,10 +482,18 @@ function rotateSelected() {
     saveToLocal();
 }
 
+function toggleLockSelected() {
+    const f = furnitureList.find(x => x.id === selectedId);
+    if (!f) { alert('Selecciona un mueble primero'); return; }
+    f.locked = !f.locked;
+    renderRoom();
+    saveToLocal();
+}
+
 function deleteSelected() {
     if (!selectedId) return;
     const f = furnitureList.find(x => x.id === selectedId);
-    if (f && f.locked) { alert('Este mueble es fijo, no se puede eliminar.'); return; }
+    if (f && f.locked) { alert('Este mueble esta fijo. Usa "Fijar/Soltar" para soltarlo y luego eliminalo.'); return; }
     if (f && confirm('Eliminar "' + f.name + '"?')) {
         furnitureList = furnitureList.filter(x => x.id !== selectedId);
         selectedId = null;
@@ -582,6 +592,19 @@ function loadFromLocal() {
     if (saved) {
         furnitureList = JSON.parse(saved);
         nextId = parseInt(localStorage.getItem('roomPlannerNextId') || '20');
+        // Migracion unica: el perchero de pared ya no es fijo (solo la TV).
+        // Los datos guardados antes de este cambio lo traen bloqueado.
+        if (!localStorage.getItem('roomPlannerPercheroLibre')) {
+            furnitureList.forEach(f => {
+                if (f.id === 13) {
+                    f.locked = false;
+                    f.name = 'Perchero de pared';
+                    if (f.category === 'fixed') f.category = 'entry';
+                }
+            });
+            localStorage.setItem('roomPlannerPercheroLibre', '1');
+            saveToLocal();
+        }
     }
 }
 

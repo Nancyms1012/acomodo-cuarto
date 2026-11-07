@@ -316,7 +316,6 @@
     <div class="canvas-area" id="canvasArea">
         <div class="room-canvas" id="roomCanvas">
             <div class="balcon-indicator">BALCON</div>
-            <div class="door-indicator" id="doorIndicator">Puerta</div>
             <div class="division-line" id="divLine"></div>
             <div class="div-label" id="divLabel">DIVISION</div>
             <!-- Medidas de las paredes -->
@@ -417,16 +416,21 @@ const COLORS = {
     work: { bg: 'rgba(255,193,7,0.35)', border: '#ffc107', text: '#ffc107' },
     decor: { bg: 'rgba(255,152,0,0.35)', border: '#ff9800', text: '#ff9800' },
     entry: { bg: 'rgba(139,195,74,0.35)', border: '#8bc34a', text: '#8bc34a' },
-    fixed: { bg: 'rgba(255,107,107,0.35)', border: '#ff6b6b', text: '#ff6b6b' }
+    fixed: { bg: 'rgba(255,107,107,0.35)', border: '#ff6b6b', text: '#ff6b6b' },
+    door: { bg: 'rgba(139,195,74,0.12)', border: '#8bc34a', text: '#8bc34a' }
 };
+
+// Puerta: cuadro de 75x75 cm sobre la pared derecha. Abarca el ancho de la puerta y su abertura.
+const DEFAULT_DOOR = { id: 1, name: 'Puerta (abertura)', largo: 75, ancho: 75, x: 149, y: 0, rotated: false, locked: true, category: 'door' };
 
 // Default furniture layout matching the correct screenshot
 // x = horizontal (0=left wall, 224=right wall)
 // y = vertical (0=top/entrance, 584=bottom/bed wall)
 const DEFAULT_FURNITURE = [
+    DEFAULT_DOOR, // primero, para que los muebles se dibujen encima
     // Posiciones y tamanos reales (cm). rotated=false -> ocupa largo (horizontal) x ancho (vertical).
     // rotated=true -> ocupa ancho (horizontal) x largo (vertical).
-    { id: 2, name: 'Perchero pie', largo: 30, ancho: 30, x: 130, y: 38, rotated: false, locked: false, category: 'entry' },
+    { id: 2, name: 'Perchero pie', largo: 30, ancho: 30, x: 120, y: 78, rotated: false, locked: false, category: 'entry' },
     { id: 3, name: 'Mesa de adorno', largo: 80, ancho: 40, x: 45, y: 32, rotated: false, locked: false, category: 'decor' },
     { id: 4, name: 'Estante grande', largo: 90, ancho: 45, x: 0, y: 42, rotated: true, locked: false, category: 'storage' },
     { id: 5, name: 'Comoda grande', largo: 130, ancho: 43, x: 0, y: 135, rotated: true, locked: false, category: 'storage' },
@@ -494,12 +498,6 @@ function renderRoom() {
     // Balcon: franja de 28cm arriba
     document.querySelector('.balcon-indicator').style.height = (28 * SCALE) + 'px';
 
-    // Door indicator (top right)
-    const door = document.getElementById('doorIndicator');
-    door.style.top = (5 * SCALE) + 'px';
-    door.style.right = '0px';
-    door.style.width = (75 * SCALE) + 'px';
-    door.style.height = (20 * SCALE) + 'px';
 
     // Remove old furniture
     canvas.querySelectorAll('.furniture-item').forEach(el => el.remove());
@@ -512,6 +510,7 @@ function renderRoom() {
         el.style.background = col.bg;
         el.style.borderColor = col.border;
         el.style.color = col.text;
+        if (f.category === 'door') el.style.borderStyle = 'dashed';
 
         // rotated swaps width/height visually
         const w = (f.rotated ? f.ancho : f.largo) * SCALE;
@@ -822,6 +821,12 @@ function loadFromLocal() {
     if (saved) {
         furnitureList = JSON.parse(saved);
         nextId = parseInt(localStorage.getItem('roomPlannerNextId') || '20');
+        // Migracion unica: la puerta ahora es un cuadro de 75x75 que forma parte de la lista.
+        if (!localStorage.getItem('roomPlannerPuerta75')) {
+            if (!furnitureList.some(f => f.id === 1)) furnitureList.unshift(JSON.parse(JSON.stringify(DEFAULT_DOOR)));
+            localStorage.setItem('roomPlannerPuerta75', '1');
+            saveToLocal();
+        }
         // Migracion unica: el perchero de pared ya no es fijo (solo la TV).
         // Los datos guardados antes de este cambio lo traen bloqueado.
         if (!localStorage.getItem('roomPlannerPercheroLibre')) {

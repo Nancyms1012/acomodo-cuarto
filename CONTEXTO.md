@@ -26,7 +26,8 @@ Mitades:
 
 - La división está a Y = 300. Es un pedazo de pared de 75 × 10 cm que sale de la pared derecha (ocupa Y 290–300, X 149–224). El resto del cuarto está abierto entre las dos mitades.
 - La pared de arriba es un balcón: no hay pared ni ventana, solo una cortina. En el dibujo es una franja de 28 cm.
-- La puerta es corrediza (75 cm en el dibujo, arriba a la derecha). Se puede cambiar el lado de apertura.
+- La puerta es corrediza y está sobre la pared derecha. En el dibujo es un cuadro de 75 × 75 cm que abarca el ancho de la puerta y su abertura (zona que hay que dejar libre). Se puede cambiar el lado de apertura.
+- La posición exacta de la puerta sobre la pared derecha (distancia desde la esquina de arriba) es una suposición: se colocó en la esquina de arriba (x 149–224, y 0–75). Se puede ajustar con el botón "Medidas" (soltándola antes con "Fijar/Soltar" si hace falta).
 - El dibujo usa 224 cm de ancho para todo el cuarto. En la mitad de la puerta el ancho real es 220 cm; esos 4 cm no se dibujan, solo se rotulan en la pared de arriba.
 
 ## Muebles y medidas
@@ -35,7 +36,8 @@ Medidas en cm. En el código: `largo` es la medida horizontal y `ancho` la verti
 
 | # | Mueble | Largo × ancho | Posición inicial (x, y) | Dibujado (horizontal × vertical) |
 |---|---|---|---|---|
-| 2 | Perchero de pie | 30 × 30 | 130, 38 | 30 × 30 |
+| 1 | Puerta (abertura), fija | 75 × 75 | 149, 0 | 75 × 75 |
+| 2 | Perchero de pie | 30 × 30 | 120, 78 | 30 × 30 |
 | 3 | Mesa de adorno | 80 × 40 | 45, 32 | 80 × 40 |
 | 4 | Estante grande | 90 × 45 | 0, 42 | 45 × 90 |
 | 5 | Cómoda grande | 130 × 43 | 0, 135 | 43 × 130 |
@@ -93,6 +95,7 @@ Según la descripción de la usuaria:
 | 7 nov 2026 | Medidas en cada pared |
 | 7 nov 2026 | Dimensiones corregidas: cama de pie, división de 75 cm, puerta y balcón a escala, posiciones sin solapes |
 | 7 nov 2026 | Medidas visibles en cada mueble y edición de medidas, nombre y posición |
+| 7 nov 2026 | La puerta pasa a ser un cuadro de 75 × 75 cm sobre la pared derecha (antes un rectángulo de 75 × 20 arriba). Es un elemento de la lista, con cotas y editable. El perchero de pie se movió a (120, 78) para no tapar la zona de la puerta |
 | 7 nov 2026 | Cotas (líneas de medida) en cada mueble. Rotar ahora gira alrededor del centro y mantiene el mueble dentro del cuarto |
 
 ## Pendientes e ideas
@@ -101,6 +104,7 @@ Según la descripción de la usuaria:
 - Aviso cuando la cama queda a menos de 38 cm de una pared lateral.
 - Agregar el espejo de pie que reemplazaría a la cómoda pequeña (se puede crear con "+ Agregar", por ejemplo 50 × 12 cm).
 - Confirmar la ubicación de la TV.
+- Confirmar a cuántos cm de la esquina de arriba está la puerta en la pared derecha. Con la puerta en la esquina, la zona de 75 × 75 se solapa con la cómoda pequeña (que se piensa eliminar).
 - Opción de guardar varias distribuciones con nombre (ahora solo hay una guardada en el navegador).
 
 ## Respaldos y fuentes
